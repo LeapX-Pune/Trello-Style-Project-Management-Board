@@ -1,0 +1,216 @@
+/* ============================================================
+   ProjectFlow — responsive.css
+   Breakpoints:
+   ≥ 1280px  Desktop  — 5 columns, full sidebars
+   1024–1279 Laptop   — 4 columns, compact sidebars
+    768–1023 Tablet   — 3 columns, icon-only left sidebar, no right sidebar
+      < 768  Mobile   — horizontal scroll, hidden sidebars, sticky header
+============================================================ */
+
+/* ─── DESKTOP ≥ 1280px ───────────────────────────────────── */
+/* Default layout is defined in style.css — no overrides needed */
+
+/* ─── LAPTOP 1024px – 1279px ─────────────────────────────── */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  :root {
+    --w-sb-left:  192px;
+    --w-sb-right: 218px;
+  }
+
+  .kol { width: 256px; min-width: 256px; }
+
+  .header-inner { gap: 9px; padding: 0 16px; }
+  .hd-search    { width: 220px; }
+  .brand-ws     { display: none; }
+
+  .brd-topbar { padding: 14px 16px 12px; }
+  .brd-title  { font-size: 16px; }
+  .brd-scroll-area { padding: 0 16px 16px; gap: 12px; }
+}
+
+/* ─── TABLET 768px – 1023px ──────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --w-sb-left:  56px;
+    --w-sb-right: 0px;
+    --h-header:   56px;
+  }
+
+  /* Header */
+  .header-inner { padding: 0 14px; gap: 8px; }
+  .hd-search    { width: 170px; }
+  .brand-ws, .hd-project-name, .hd-uname, .hd-ucaret,
+  .hd-btn-pill span { display: none; }
+
+  /* Left Sidebar — icon only */
+  .sidebar-left {
+    width: var(--w-sb-left); min-width: var(--w-sb-left);
+    padding: 12px 0; align-items: center;
+  }
+  .sb-nav   { padding: 0 6px; align-items: center; }
+  .sb-link span, .sb-badge { display: none; }
+  .sb-link  { justify-content: center; padding: 10px; }
+  .sb-link--active::before { display: none; }
+  .sb-section, .sb-divider { display: none; }
+  .sb-nav + .sb-divider    { display: block; }
+
+  /* Right sidebar — hidden */
+  .sidebar-right { display: none; }
+
+  /* Columns */
+  .kol { width: 262px; min-width: 262px; }
+  .brd-scroll-area { padding: 0 14px 14px; gap: 12px; }
+  .brd-topbar { padding: 14px 14px 10px; }
+  .brd-title  { font-size: 15px; }
+  .brd-av-more { display: none; }
+}
+
+/* ─── MOBILE < 768px ─────────────────────────────────────── */
+@media (max-width: 767px) {
+  :root {
+    --h-header:   52px;
+    --w-sb-left:  0px;
+    --w-sb-right: 0px;
+  }
+
+  /* Header */
+  .app-header { box-shadow: 0 2px 12px rgba(15,23,42,.10); }
+  .header-inner {
+    padding: 0 12px; gap: 7px;
+    overflow: hidden;
+  }
+
+  /* Hide on mobile */
+  .hd-project, .hd-sep,
+  .hd-btn-pill, .hd-uname, .hd-ucaret,
+  .hd-btn-icon:not([aria-label="Notifications"]):not([aria-label="Settings"]) {
+    display: none !important;
+  }
+
+  .hd-search { flex: 1; min-width: 0; width: auto; }
+  .hd-search-kbd { display: none; }
+
+  .brand-ws { display: none; }
+  .brand-text { display: none; }
+  .brand-logo { width: 30px; height: 30px; font-size: 14px; }
+
+  /* Compact new task button — icon only */
+  .hd-btn-primary span { display: none; }
+  .hd-btn-primary { width: 34px; padding: 0; justify-content: center; }
+
+  /* Sidebars — hidden */
+  .sidebar-left, .sidebar-right { display: none; }
+
+  /* Board */
+  .brd-topbar { padding: 12px 12px 10px; flex-wrap: wrap; gap: 8px; }
+  .brd-topbar-left { gap: 8px; }
+  .brd-title  { font-size: 14px; }
+  .brd-sub    { font-size: 11px; }
+  .brd-sprint-tag { font-size: 10px; padding: 2px 8px; }
+
+  .brd-scroll-area {
+    padding: 0 12px 14px; gap: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .kol { width: 255px; min-width: 255px; }
+
+  /* Compact cards on mobile */
+  .ct-desc { display: none; }
+  .card-task { padding: 10px; }
+
+  /* Avatar stack compact */
+  .brd-av      { width: 24px; height: 24px; }
+  .brd-av-more { width: 24px; height: 24px; font-size: 9px; }
+  .brd-view-btn { width: 28px; height: 26px; }
+}
+
+/* ─── VERY SMALL  < 375px ─────────────────────────────────── */
+@media (max-width: 374px) {
+  .kol { width: 238px; min-width: 238px; }
+  .header-inner { padding: 0 10px; }
+  .brd-title { font-size: 13px; }
+}
+
+/* ============================================================
+   MOBILE DRAWER — sidebar opens as overlay
+   (CSS structure; toggled by adding .is-open class via JS later)
+============================================================ */
+@media (max-width: 767px) {
+  .sidebar-left.is-open {
+    display: flex; flex-direction: column;
+    position: fixed; top: var(--h-header); left: 0; bottom: 0;
+    width: 240px; min-width: 240px; z-index: 800;
+    background: var(--c-surface); border-right: 1px solid var(--c-border);
+    box-shadow: 4px 0 24px rgba(15,23,42,.12);
+    overflow-y: auto; padding: 14px 0;
+    animation: drawerIn .25s ease;
+  }
+  @keyframes drawerIn {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
+  }
+
+  .sidebar-right.is-open {
+    display: flex; flex-direction: column;
+    position: fixed; top: var(--h-header); right: 0; bottom: 0;
+    width: 272px; min-width: 272px; z-index: 800;
+    background: var(--c-bg); border-left: 1px solid var(--c-border);
+    box-shadow: -4px 0 24px rgba(15,23,42,.12);
+    overflow-y: auto; padding: 18px 15px;
+    animation: drawerInR .25s ease;
+  }
+  @keyframes drawerInR {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+}
+
+/* ============================================================
+   FILTER PANEL — bottom sheet on mobile
+============================================================ */
+@media (max-width: 767px) {
+  .filter-box {
+    position: fixed; top: auto; bottom: 0; right: 0; left: 0;
+    width: 100%; max-width: 100%; border-radius: 18px 18px 0 0;
+    max-height: 80vh;
+  }
+}
+
+/* ============================================================
+   MODAL — bottom sheet on mobile
+============================================================ */
+@media (max-width: 767px) {
+  .modal-bg   { align-items: flex-end; padding: 0; }
+  .modal-box  { max-width: 100%; border-radius: 18px 18px 0 0; padding: 20px 16px; max-height: 92vh; }
+}
+
+/* ============================================================
+   PRINT
+============================================================ */
+@media print {
+  .app-header, .sidebar-left, .sidebar-right { display: none !important; }
+  .app-shell { height: auto; overflow: visible; }
+  .board-main { overflow: visible; }
+  .brd-scroll-area { overflow: visible; flex-wrap: wrap; height: auto; }
+  .kol { width: 200px; min-width: 200px; page-break-inside: avoid; }
+}
+
+/* ============================================================
+   ACCESSIBILITY — Reduced Motion
+============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ============================================================
+   HIGH CONTRAST
+============================================================ */
+@media (forced-colors: active) {
+  .card-task, .kol, .app-header { border: 2px solid ButtonText; }
+  .hd-btn-primary, .modal-btn-create, .filter-btn-apply { forced-color-adjust: none; }
+}
