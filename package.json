@@ -1,0 +1,8 @@
+{
+  "name": "trello-style-project-management-board",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "python3 -m http.server 3000"
+  }
+}
