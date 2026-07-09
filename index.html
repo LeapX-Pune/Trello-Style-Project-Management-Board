@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="src/styles.css" />
 </head>
 <body>
 
@@ -31,24 +32,25 @@
     <div class="hd-spacer"></div>
     <div class="hd-search">
       <i class="bi bi-search hd-search-icon"></i>
-      <input class="hd-search-input" type="text" placeholder="Search tasks, members, labels…" aria-label="Search" />
-      <kbd class="hd-search-kbd">⌘K</kbd>
+      <input class="hd-search-input" type="text" placeholder="Search tasks, members, labels&hellip;" aria-label="Search" />
+      <kbd class="hd-search-kbd">&#8984;K</kbd>
     </div>
     <div class="hd-controls">
-      <button class="hd-btn-pill" aria-label="Filter tasks"><i class="bi bi-funnel"></i><span>Filter</span></button>
+      <button class="hd-btn-pill" id="filterToggleBtn" aria-label="Filter tasks"><i class="bi bi-funnel"></i><span>Filter</span></button>
       <button class="hd-btn-pill" aria-label="Sort tasks"><i class="bi bi-arrow-down-up"></i><span>Sort</span></button>
       <div class="hd-sep"></div>
       <button class="hd-btn-icon pos-rel" aria-label="Notifications">
         <i class="bi bi-bell"></i><span class="hd-notif">3</span>
       </button>
       <button class="hd-btn-icon" aria-label="Settings"><i class="bi bi-gear"></i></button>
-      <div class="hd-avatar-wrap" role="button" tabindex="0" aria-label="Alex Johnson — user menu">
+      <button class="hd-btn-icon" id="activityToggleBtn" aria-label="Toggle activity log"><i class="bi bi-clock-history"></i></button>
+      <div class="hd-avatar-wrap" role="button" tabindex="0" aria-label="Alex Johnson &mdash; user menu">
         <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=32" alt="Alex Johnson" class="hd-avatar" />
         <span class="hd-uname">Alex Johnson</span>
         <i class="bi bi-chevron-down hd-ucaret"></i>
       </div>
       <div class="hd-sep"></div>
-      <button class="hd-btn-primary" aria-label="Create new task">
+      <button class="hd-btn-primary" id="newTaskBtn" aria-label="Create new task">
         <i class="bi bi-plus-lg"></i><span>New Task</span>
       </button>
     </div>
@@ -73,32 +75,32 @@
     <div class="sb-section-head"><span>Team Members</span><span class="sb-section-count">6</span></div>
     <div class="sb-member">
       <div class="sb-mem-av-wrap"><img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=28" alt="Alex Johnson" class="sb-mem-av" /><span class="sb-dot sb-dot--on"></span></div>
-      <div class="sb-mem-info"><span class="sb-mem-name">Alex Johnson</span><span class="sb-mem-role">Product Owner</span></div>
+      <div class="sb-mem-info"><span class="sb-mem-name">Ankit bhakle</span><span class="sb-mem-role">Product Owner</span></div>
     </div>
     <div class="sb-member">
       <div class="sb-mem-av-wrap"><img src="https://ui-avatars.com/api/?name=Sara+Lee&background=8B5CF6&color=fff&size=28" alt="Sara Lee" class="sb-mem-av" /><span class="sb-dot sb-dot--on"></span></div>
-      <div class="sb-mem-info"><span class="sb-mem-name">Sara Lee</span><span class="sb-mem-role">UI/UX Designer</span></div>
+      <div class="sb-mem-info"><span class="sb-mem-name">Khushi Sha</span><span class="sb-mem-role">UI/UX Designer</span></div>
     </div>
     <div class="sb-member">
       <div class="sb-mem-av-wrap"><img src="https://ui-avatars.com/api/?name=Marcus+Chen&background=059669&color=fff&size=28" alt="Marcus Chen" class="sb-mem-av" /><span class="sb-dot sb-dot--on"></span></div>
-      <div class="sb-mem-info"><span class="sb-mem-name">Marcus Chen</span><span class="sb-mem-role">Frontend Dev</span></div>
+      <div class="sb-mem-info"><span class="sb-mem-name">Rehan Azim</span><span class="sb-mem-role">Frontend Dev</span></div>
     </div>
     <div class="sb-member">
       <div class="sb-mem-av-wrap"><img src="https://ui-avatars.com/api/?name=Priya+Kapoor&background=F59E0B&color=fff&size=28" alt="Priya Kapoor" class="sb-mem-av" /><span class="sb-dot sb-dot--away"></span></div>
-      <div class="sb-mem-info"><span class="sb-mem-name">Priya Kapoor</span><span class="sb-mem-role">Backend Dev</span></div>
+      <div class="sb-mem-info"><span class="sb-mem-name">Sumit Tiwari </span><span class="sb-mem-role">Backend Dev</span></div>
     </div>
     <div class="sb-member">
       <div class="sb-mem-av-wrap"><img src="https://ui-avatars.com/api/?name=Tom+Rivera&background=EF4444&color=fff&size=28" alt="Tom Rivera" class="sb-mem-av" /><span class="sb-dot sb-dot--off"></span></div>
-      <div class="sb-mem-info"><span class="sb-mem-name">Tom Rivera</span><span class="sb-mem-role">QA Engineer</span></div>
+      <div class="sb-mem-info"><span class="sb-mem-name">Aditya </span><span class="sb-mem-role">QA Engineer</span></div>
     </div>
   </div>
   <div class="sb-divider"></div>
   <div class="sb-section">
     <div class="sb-section-head"><span>Quick Stats</span></div>
-    <div class="sb-stat"><div class="sb-stat-icon sb-stat-icon--blue"><i class="bi bi-list-task"></i></div><div class="sb-stat-info"><span class="sb-stat-val">48</span><span class="sb-stat-lbl">Total Tasks</span></div></div>
-    <div class="sb-stat"><div class="sb-stat-icon sb-stat-icon--green"><i class="bi bi-check-circle"></i></div><div class="sb-stat-info"><span class="sb-stat-val">21</span><span class="sb-stat-lbl">Completed</span></div></div>
-    <div class="sb-stat"><div class="sb-stat-icon sb-stat-icon--yellow"><i class="bi bi-hourglass-split"></i></div><div class="sb-stat-info"><span class="sb-stat-val">19</span><span class="sb-stat-lbl">Pending</span></div></div>
-    <div class="sb-stat"><div class="sb-stat-icon sb-stat-icon--red"><i class="bi bi-exclamation-circle"></i></div><div class="sb-stat-info"><span class="sb-stat-val">8</span><span class="sb-stat-lbl">Overdue</span></div></div>
+    <div class="sb-stat"><div class="sb-stat-icon sb-stat-icon--blue"><i class="bi bi-list-task"></i></div><div class="sb-stat-info"><span class="sb-stat-val" id="statTotal">48</span><span class="sb-stat-lbl">Total Tasks</span></div></div>
+    <div class="sb-stat"><div class="sb-stat-icon sb-stat-icon--green"><i class="bi bi-check-circle"></i></div><div class="sb-stat-info"><span class="sb-stat-val" id="statCompleted">21</span><span class="sb-stat-lbl">Completed</span></div></div>
+    <div class="sb-stat"><div class="sb-stat-icon sb-stat-icon--yellow"><i class="bi bi-hourglass-split"></i></div><div class="sb-stat-info"><span class="sb-stat-val" id="statPending">19</span><span class="sb-stat-lbl">Pending</span></div></div>
+    <div class="sb-stat"><div class="sb-stat-icon sb-stat-icon--red"><i class="bi bi-exclamation-circle"></i></div><div class="sb-stat-info"><span class="sb-stat-val" id="statOverdue">8</span><span class="sb-stat-lbl">Overdue</span></div></div>
     <div class="sb-progress-wrap">
       <div class="sb-progress-row"><span class="sb-progress-lbl">Sprint Progress</span><span class="sb-progress-pct">44%</span></div>
       <div class="sb-progress-track" role="progressbar" aria-valuenow="44" aria-valuemin="0" aria-valuemax="100" aria-label="Sprint progress 44%">
@@ -135,458 +137,13 @@
     </div>
   </div>
 
-  <!-- Columns -->
-  <div class="brd-scroll-area">
+  <div class="brd-scroll-area" id="app">
+  </div>
 
-    <!-- COLUMN: BACKLOG -->
-    <div class="kol" aria-label="Backlog column">
-      <div class="kol-head">
-        <div class="kol-head-l">
-          <div class="kol-icon kol-icon--backlog"><i class="bi bi-inbox"></i></div>
-          <span class="kol-title">Backlog</span>
-          <span class="kol-count">7</span>
-        </div>
-        <button class="kol-menu" aria-label="Backlog options"><i class="bi bi-three-dots"></i></button>
-      </div>
-      <div class="kol-cards" role="list">
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--high"><i class="bi bi-arrow-up"></i>High</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--design">Design</span>
-            <span class="lbl lbl--brand">Branding</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:40%"></div></div>
-            <span class="ct-chk-txt">2 / 5</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--tomorrow"><i class="bi bi-clock"></i>Tomorrow</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>3</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i>2</span>
-              
-              <img src="https://ui-avatars.com/api/?name=Sara+Lee&background=8B5CF6&color=fff&size=22" alt="Sara Lee" class="ct-av" />
-            </div>
-          </div>
-        </article>
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--med"><i class="bi bi-dash"></i>Medium</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--research">Research</span>
-            
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:0%"></div></div>
-            <span class="ct-chk-txt">0 / 0</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--overdue"><i class="bi bi-exclamation-circle"></i>Overdue</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>1</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i></span>
-              <span class="ct-stat"><i class="bi bi-clock-history"></i>4h</span>
-              <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=22" alt="Alex Johnson" class="ct-av" />
-            </div>
-          </div>
-        </article>
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--low"><i class="bi bi-arrow-down"></i>Low</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--dev">Dev</span>
-            <span class="lbl lbl--research">Research</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:0%"></div></div>
-            <span class="ct-chk-txt">0 / 0</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--normal"><i class="bi bi-calendar3"></i>Jul 22</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>0</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i></span>
-              <span class="ct-stat"><i class="bi bi-clock-history"></i>2h</span>
-              <img src="https://ui-avatars.com/api/?name=Tom+Rivera&background=EF4444&color=fff&size=22" alt="Tom Rivera" class="ct-av" />
-            </div>
-          </div>
-        </article>
-        <article class="card-task card-task--skel" aria-hidden="true">
-          <div class="skel skel--sm mb-2"></div>
-          <div class="skel skel--full mb-1"></div>
-          <div class="skel skel--md mb-3"></div>
-          <div class="skel skel--sm"></div>
-        </article>
-      </div>
-      <button class="kol-add" aria-label="Add task to Backlog"><i class="bi bi-plus-lg"></i>Add Task</button>
-    </div>
-
-    <!-- COLUMN: TO DO -->
-    <div class="kol" aria-label="To Do column">
-      <div class="kol-head">
-        <div class="kol-head-l">
-          <div class="kol-icon kol-icon--todo"><i class="bi bi-circle"></i></div>
-          <span class="kol-title">To Do</span>
-          <span class="kol-count">9</span>
-        </div>
-        <button class="kol-menu" aria-label="To Do options"><i class="bi bi-three-dots"></i></button>
-      </div>
-      <div class="kol-cards" role="list">
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--crit"><i class="bi bi-fire"></i>Critical</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--design">Design</span>
-            <span class="lbl lbl--dev">Dev</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:60%"></div></div>
-            <span class="ct-chk-txt">3 / 5</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--today"><i class="bi bi-calendar-check"></i>Today</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>6</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i>4</span>
-              
-              <img src="https://ui-avatars.com/api/?name=Sara+Lee&background=8B5CF6&color=fff&size=22" alt="Sara Lee" class="ct-av" />
-            </div>
-          </div>
-        </article>
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--med"><i class="bi bi-dash"></i>Medium</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--content">Content</span>
-            <span class="lbl lbl--brand">Branding</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:0%"></div></div>
-            <span class="ct-chk-txt">0 / 0</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--normal"><i class="bi bi-calendar3"></i>Jul 18</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>2</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i></span>
-              <span class="ct-stat"><i class="bi bi-clock-history"></i>6h</span>
-              <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=22" alt="Alex Johnson" class="ct-av" />
-            </div>
-          </div>
-        </article>
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--low"><i class="bi bi-arrow-down"></i>Low</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--design">Design</span>
-            
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:0%"></div></div>
-            <span class="ct-chk-txt">0 / 0</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--normal"><i class="bi bi-calendar3"></i>Jul 20</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>0</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i></span>
-              <span class="ct-stat"><i class="bi bi-clock-history"></i>3h</span>
-              <img src="https://ui-avatars.com/api/?name=Priya+Kapoor&background=F59E0B&color=fff&size=22" alt="Priya Kapoor" class="ct-av" />
-            </div>
-          </div>
-        </article>
-      </div>
-      <button class="kol-add" aria-label="Add task to To Do"><i class="bi bi-plus-lg"></i>Add Task</button>
-    </div>
-
-    <!-- COLUMN: IN PROGRESS -->
-    <div class="kol kol--active" aria-label="In Progress column">
-      <div class="kol-head">
-        <div class="kol-head-l">
-          <div class="kol-icon kol-icon--prog"><i class="bi bi-arrow-repeat"></i></div>
-          <span class="kol-title">In Progress</span>
-          <span class="kol-count">12</span>
-        </div>
-        <button class="kol-menu" aria-label="In Progress options"><i class="bi bi-three-dots"></i></button>
-      </div>
-      <div class="kol-cards" role="list">
-        <article class="card-task card-task--feat" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--crit"><i class="bi bi-fire"></i>Critical</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">New color palette &amp; brand identity</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--design">Design</span>
-            <span class="lbl lbl--brand">Branding</span>
-            <span class="lbl lbl--goal">Sprint Goal</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:75%"></div></div>
-            <span class="ct-chk-txt">6 / 8</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--today"><i class="bi bi-calendar-check"></i>Today</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>14</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i>7</span>
-              <div class="ct-av-stack">
-                <img src="https://ui-avatars.com/api/?name=Sara+Lee&background=8B5CF6&color=fff&size=22" alt="Sara Lee" class="ct-av ct-av--s" />
-                <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=22" alt="Alex Johnson" class="ct-av ct-av--s" />
-              </div>
-            </div>
-          </div>
-        </article>
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--high"><i class="bi bi-arrow-up"></i>High</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--content">Content</span>
-            <span class="lbl lbl--dev">Dev</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:33%"></div></div>
-            <span class="ct-chk-txt">1 / 3</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--tomorrow"><i class="bi bi-clock"></i>Tomorrow</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>5</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i>3</span>
-              
-              <img src="https://ui-avatars.com/api/?name=Marcus+Chen&background=059669&color=fff&size=22" alt="Marcus Chen" class="ct-av" />
-            </div>
-          </div>
-        </article>
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--med"><i class="bi bi-dash"></i>Medium</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--design">Design</span>
-            <span class="lbl lbl--content">Content</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:0%"></div></div>
-            <span class="ct-chk-txt">0 / 0</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--normal"><i class="bi bi-calendar3"></i>Jul 16</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>3</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i></span>
-              <span class="ct-stat"><i class="bi bi-clock-history"></i>8h</span>
-              <img src="https://ui-avatars.com/api/?name=Priya+Kapoor&background=F59E0B&color=fff&size=22" alt="Priya Kapoor" class="ct-av" />
-            </div>
-          </div>
-        </article>
-      </div>
-      <button class="kol-add" aria-label="Add task to In Progress"><i class="bi bi-plus-lg"></i>Add Task</button>
-    </div>
-
-    <!-- COLUMN: REVIEW -->
-    <div class="kol" aria-label="Review column">
-      <div class="kol-head">
-        <div class="kol-head-l">
-          <div class="kol-icon kol-icon--review"><i class="bi bi-eye"></i></div>
-          <span class="kol-title">Review</span>
-          <span class="kol-count">5</span>
-        </div>
-        <button class="kol-menu" aria-label="Review options"><i class="bi bi-three-dots"></i></button>
-      </div>
-      <div class="kol-cards" role="list">
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--high"><i class="bi bi-arrow-up"></i>High</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--design">Design</span>
-            <span class="lbl lbl--brand">Branding</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:100%"></div></div>
-            <span class="ct-chk-txt">4 / 4</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--today"><i class="bi bi-calendar-check"></i>Today</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>8</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i>12</span>
-              
-              <img src="https://ui-avatars.com/api/?name=Sara+Lee&background=8B5CF6&color=fff&size=22" alt="Sara Lee" class="ct-av" />
-            </div>
-          </div>
-        </article>
-        <article class="card-task" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--med"><i class="bi bi-dash"></i>Medium</span>
-            <button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>
-          </div>
-          <h3 class="ct-title">Task title goes here</h3>
-          <p class="ct-desc">Add a short description for this task here.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--content">Content</span>
-            
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:0%"></div></div>
-            <span class="ct-chk-txt">0 / 0</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--normal"><i class="bi bi-calendar3"></i>Jul 15</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>4</span>
-              <span class="ct-stat"><i class="bi bi-paperclip"></i></span>
-              <span class="ct-stat"><i class="bi bi-clock-history"></i>5h</span>
-              <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=22" alt="Alex Johnson" class="ct-av" />
-            </div>
-          </div>
-        </article>
-      </div>
-      <button class="kol-add" aria-label="Add task to Review"><i class="bi bi-plus-lg"></i>Add Task</button>
-    </div>
-
-    <!-- COLUMN: DONE -->
-    <div class="kol kol--done" aria-label="Done column">
-      <div class="kol-head">
-        <div class="kol-head-l">
-          <div class="kol-icon kol-icon--done"><i class="bi bi-check2-all"></i></div>
-          <span class="kol-title">Done</span>
-          <span class="kol-count">15</span>
-        </div>
-        <button class="kol-menu" aria-label="Done options"><i class="bi bi-three-dots"></i></button>
-      </div>
-      <div class="kol-cards" role="list">
-        <article class="card-task card-task--done" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--high"><i class="bi bi-arrow-up"></i>High</span>
-            <span class="ct-done-dot" aria-label="Completed"></span>
-          </div>
-          <h3 class="ct-title ct-title--done">Task title goes here</h3>
-          <p class="ct-desc">Task completed successfully.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--meeting">Meeting</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:100%"></div></div>
-            <span class="ct-chk-txt">Done</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--done"><i class="bi bi-check-circle"></i>Done</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>7</span>
-              <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=22" alt="Alex Johnson" class="ct-av" />
-            </div>
-          </div>
-        </article>
-        <article class="card-task card-task--done" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--low"><i class="bi bi-arrow-down"></i>Low</span>
-            <span class="ct-done-dot" aria-label="Completed"></span>
-          </div>
-          <h3 class="ct-title ct-title--done">Task title goes here</h3>
-          <p class="ct-desc">Task completed successfully.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--meeting">Meeting</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:100%"></div></div>
-            <span class="ct-chk-txt">Done</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--done"><i class="bi bi-check-circle"></i>Done</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>2</span>
-              <img src="https://ui-avatars.com/api/?name=Tom+Rivera&background=EF4444&color=fff&size=22" alt="Tom Rivera" class="ct-av" />
-            </div>
-          </div>
-        </article>
-        <article class="card-task card-task--done" role="listitem">
-          <div class="ct-top">
-            <span class="pri pri--med"><i class="bi bi-dash"></i>Medium</span>
-            <span class="ct-done-dot" aria-label="Completed"></span>
-          </div>
-          <h3 class="ct-title ct-title--done">Task title goes here</h3>
-          <p class="ct-desc">Task completed successfully.</p>
-          <div class="ct-labels">
-            <span class="lbl lbl--dev">Dev</span>
-          </div>
-          <div class="ct-checklist">
-            <i class="bi bi-check2-square ct-chk-icon"></i>
-            <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:100%"></div></div>
-            <span class="ct-chk-txt">Done</span>
-          </div>
-          <div class="ct-foot">
-            <span class="due due--done"><i class="bi bi-check-circle"></i>Done</span>
-            <div class="ct-meta">
-              <span class="ct-stat"><i class="bi bi-chat"></i>3</span>
-              <img src="https://ui-avatars.com/api/?name=Marcus+Chen&background=059669&color=fff&size=22" alt="Marcus Chen" class="ct-av" />
-            </div>
-          </div>
-        </article>
-      </div>
-      <button class="kol-add" aria-label="Add task to Done"><i class="bi bi-plus-lg"></i>Add Task</button>
-    </div>
-
-    <!-- ADD COLUMN -->
-    <div class="kol-add-col" role="button" tabindex="0" aria-label="Add new column">
-      <i class="bi bi-plus-circle"></i><span>Add Column</span>
-    </div>
-
-  </div><!-- /brd-scroll-area -->
 </main>
 
 <!-- RIGHT SIDEBAR -->
-<aside class="sidebar-right" aria-label="Activity timeline">
+<aside class="sidebar-right" id="activitySidebar" aria-label="Activity timeline">
   <div class="rs-head">
     <h2 class="rs-title">Activity</h2>
     <button class="hd-btn-icon rs-refresh" aria-label="Refresh activity"><i class="bi bi-arrow-clockwise"></i></button>
@@ -625,15 +182,15 @@
 
 </div><!-- /app-shell -->
 
-<!-- CREATE TASK MODAL (UI only - show by changing display:none to display:flex in .modal-bg) -->
-<div class="modal-bg" id="modalCreate" role="dialog" aria-modal="true" aria-labelledby="modalCreateTitle">
+<!-- CREATE TASK MODAL -->
+<div class="modal-bg" id="modalCreate" role="dialog" aria-modal="true" aria-labelledby="modalCreateTitle" style="display:none;">
   <div class="modal-box">
     <div class="modal-box-head">
       <div class="d-flex align-items-center gap-2">
         <div class="modal-icon-wrap"><i class="bi bi-plus-circle-fill"></i></div>
         <h2 class="modal-box-title" id="modalCreateTitle">Create New Task</h2>
       </div>
-      <button class="modal-close" aria-label="Close modal"><i class="bi bi-x-lg"></i></button>
+      <button class="modal-close" id="modalCloseBtn" aria-label="Close modal"><i class="bi bi-x-lg"></i></button>
     </div>
     <div class="mf-group">
       <label class="mf-label" for="mfTitle">Task Title <span class="mf-req">*</span></label>
@@ -647,13 +204,24 @@
       <div class="col-6">
         <div class="mf-group">
           <label class="mf-label">Priority</label>
-          <div class="mf-select" role="combobox" tabindex="0" aria-label="Select priority"><span class="pri pri--med"><i class="bi bi-dash"></i>Medium</span><i class="bi bi-chevron-down mf-caret"></i></div>
+          <select class="mf-input" id="mfPriority">
+            <option value="Critical">Critical</option>
+            <option value="High">High</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Low">Low</option>
+          </select>
         </div>
       </div>
       <div class="col-6">
         <div class="mf-group">
           <label class="mf-label">Status</label>
-          <div class="mf-select" role="combobox" tabindex="0" aria-label="Select status"><div class="kol-icon kol-icon--todo kol-icon--xs me-1"><i class="bi bi-circle"></i></div><span>To Do</span><i class="bi bi-chevron-down mf-caret"></i></div>
+          <select class="mf-input" id="mfStatus">
+            <option value="Backlog">Backlog</option>
+            <option value="To Do" selected>To Do</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Review">Review</option>
+            <option value="Done">Done</option>
+          </select>
         </div>
       </div>
     </div>
@@ -661,99 +229,75 @@
       <div class="col-6">
         <div class="mf-group">
           <label class="mf-label">Assignee</label>
-          <div class="mf-select" role="combobox" tabindex="0" aria-label="Select assignee"><img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=18" alt="" class="mf-av" /><span>Alex Johnson</span><i class="bi bi-chevron-down mf-caret"></i></div>
+          <select class="mf-input" id="mfAssignee">
+            <option value="">Unassigned</option>
+            <option value="Alex Johnson">Alex Johnson</option>
+            <option value="Sara Lee">Sara Lee</option>
+            <option value="Marcus Chen">Marcus Chen</option>
+            <option value="Priya Kapoor">Priya Kapoor</option>
+            <option value="Tom Rivera">Tom Rivera</option>
+          </select>
         </div>
       </div>
       <div class="col-6">
         <div class="mf-group">
           <label class="mf-label">Due Date</label>
-          <div class="mf-select" role="textbox" tabindex="0" aria-label="Pick due date"><i class="bi bi-calendar3 me-1" style="color:var(--c-muted)"></i><span style="color:var(--c-muted)">Pick a date</span><i class="bi bi-chevron-down mf-caret"></i></div>
+          <input class="mf-input" id="mfDueDate" type="date" />
         </div>
       </div>
     </div>
-    <div class="mf-group">
-      <label class="mf-label">Tags</label>
-      <div class="mf-tags-area">
-        <span class="lbl lbl--design d-inline-flex align-items-center gap-1">Design <i class="bi bi-x"></i></span>
-        <span class="lbl lbl--brand d-inline-flex align-items-center gap-1">Branding <i class="bi bi-x"></i></span>
-        <button class="mf-tag-add" aria-label="Add tag"><i class="bi bi-plus"></i>Add tag</button>
-      </div>
-    </div>
-    <div class="mf-group">
-      <label class="mf-label">Checklist</label>
-      <div class="mf-checklist">
-        <div class="mf-chk-item"><div class="mf-chk mf-chk--on" role="checkbox" aria-checked="true" tabindex="0"><i class="bi bi-check-lg"></i></div><span class="mf-chk-txt mf-chk-txt--done">Define color palette options</span></div>
-        <div class="mf-chk-item"><div class="mf-chk" role="checkbox" aria-checked="false" tabindex="0"></div><span class="mf-chk-txt">Present to stakeholders</span></div>
-        <div class="mf-chk-item"><div class="mf-chk" role="checkbox" aria-checked="false" tabindex="0"></div><span class="mf-chk-txt">Export final assets</span></div>
-        <button class="mf-chk-add" aria-label="Add checklist item"><i class="bi bi-plus"></i>Add item</button>
-      </div>
-    </div>
     <div class="modal-box-foot">
-      <button class="modal-btn-cancel">Cancel</button>
-      <button class="modal-btn-create"><i class="bi bi-plus-lg"></i>Create Task</button>
+      <button class="modal-btn-cancel" id="modalCancelBtn">Cancel</button>
+      <button class="modal-btn-create" id="modalSaveBtn"><i class="bi bi-plus-lg"></i>Create Task</button>
     </div>
+    <div id="form-error-message" style="color:red;font-size:14px;display:none;padding:10px;"></div>
   </div>
 </div>
 
-<!-- FILTER PANEL (UI only - show by changing display:none to display:block in .filter-bg) -->
-<div class="filter-bg" id="filterPanel" role="dialog" aria-modal="true" aria-labelledby="filterTitle">
+<!-- FILTER PANEL -->
+<div class="filter-bg" id="filterPanel" style="display:none;">
   <div class="filter-box">
     <div class="filter-head">
       <h2 class="filter-title" id="filterTitle"><i class="bi bi-funnel me-2"></i>Filters</h2>
-      <button class="modal-close" aria-label="Close filter panel"><i class="bi bi-x-lg"></i></button>
+      <button class="modal-close" id="filterCloseBtn" aria-label="Close filter panel"><i class="bi bi-x-lg"></i></button>
     </div>
     <div class="filter-section">
       <div class="filter-sec-lbl">Priority</div>
-      <div class="filter-chips">
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span class="pri pri--crit"><i class="bi bi-fire"></i>Critical</span></label>
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span class="pri pri--high"><i class="bi bi-arrow-up"></i>High</span></label>
-        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" checked /><span class="pri pri--med"><i class="bi bi-dash"></i>Medium</span></label>
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span class="pri pri--low"><i class="bi bi-arrow-down"></i>Low</span></label>
+      <div class="filter-chips" id="filterPriority">
+        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" value="Critical" /><span class="pri pri--crit"><i class="bi bi-fire"></i>Critical</span></label>
+        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" value="High" /><span class="pri pri--high"><i class="bi bi-arrow-up"></i>High</span></label>
+        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" value="Medium" checked /><span class="pri pri--med"><i class="bi bi-dash"></i>Medium</span></label>
+        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" value="Low" /><span class="pri pri--low"><i class="bi bi-arrow-down"></i>Low</span></label>
       </div>
     </div>
     <div class="filter-section">
       <div class="filter-sec-lbl">Status</div>
-      <div class="filter-chips">
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span>Backlog</span></label>
-        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" checked /><span>To Do</span></label>
-        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" checked /><span>In Progress</span></label>
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span>Review</span></label>
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span>Done</span></label>
+      <div class="filter-chips" id="filterStatus">
+        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" value="Backlog" checked /><span>Backlog</span></label>
+        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" value="To Do" checked /><span>To Do</span></label>
+        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" value="In Progress" checked /><span>In Progress</span></label>
+        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" value="Review" checked /><span>Review</span></label>
+        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" value="Done" checked /><span>Done</span></label>
       </div>
     </div>
     <div class="filter-section">
       <div class="filter-sec-lbl">Assignee</div>
-      <div class="filter-chips">
-        <label class="fchip fchip--on d-inline-flex align-items-center gap-1" tabindex="0"><input type="checkbox" class="visually-hidden" checked /><img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=16" alt="Alex" class="rounded-circle" width="16" height="16" /><span>Alex</span></label>
-        <label class="fchip d-inline-flex align-items-center gap-1" tabindex="0"><input type="checkbox" class="visually-hidden" /><img src="https://ui-avatars.com/api/?name=Sara+Lee&background=8B5CF6&color=fff&size=16" alt="Sara" class="rounded-circle" width="16" height="16" /><span>Sara</span></label>
-        <label class="fchip d-inline-flex align-items-center gap-1" tabindex="0"><input type="checkbox" class="visually-hidden" /><img src="https://ui-avatars.com/api/?name=Marcus+Chen&background=059669&color=fff&size=16" alt="Marcus" class="rounded-circle" width="16" height="16" /><span>Marcus</span></label>
-        <label class="fchip d-inline-flex align-items-center gap-1" tabindex="0"><input type="checkbox" class="visually-hidden" /><img src="https://ui-avatars.com/api/?name=Priya+Kapoor&background=F59E0B&color=fff&size=16" alt="Priya" class="rounded-circle" width="16" height="16" /><span>Priya</span></label>
-      </div>
-    </div>
-    <div class="filter-section">
-      <div class="filter-sec-lbl">Due Date</div>
-      <div class="filter-chips">
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span>Today</span></label>
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span>Tomorrow</span></label>
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span>This Week</span></label>
-        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" checked /><span>Overdue</span></label>
-      </div>
-    </div>
-    <div class="filter-section">
-      <div class="filter-sec-lbl">Labels</div>
-      <div class="filter-chips">
-        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" checked /><span class="lbl lbl--design">Design</span></label>
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span class="lbl lbl--brand">Branding</span></label>
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span class="lbl lbl--dev">Dev</span></label>
-        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" /><span class="lbl lbl--content">Content</span></label>
+      <div class="filter-chips" id="filterAssignee">
+        <label class="fchip fchip--on" tabindex="0"><input type="checkbox" class="visually-hidden" value="Alex Johnson" checked /><img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=16" alt="" class="rounded-circle" width="16" height="16" /><span>Alex</span></label>
+        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" value="Sara Lee" /><img src="https://ui-avatars.com/api/?name=Sara+Lee&background=8B5CF6&color=fff&size=16" alt="" class="rounded-circle" width="16" height="16" /><span>Sara</span></label>
+        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" value="Marcus Chen" /><img src="https://ui-avatars.com/api/?name=Marcus+Chen&background=059669&color=fff&size=16" alt="" class="rounded-circle" width="16" height="16" /><span>Marcus</span></label>
+        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" value="Priya Kapoor" /><img src="https://ui-avatars.com/api/?name=Priya+Kapoor&background=F59E0B&color=fff&size=16" alt="" class="rounded-circle" width="16" height="16" /><span>Priya</span></label>
+        <label class="fchip" tabindex="0"><input type="checkbox" class="visually-hidden" value="Tom Rivera" /><img src="https://ui-avatars.com/api/?name=Tom+Rivera&background=EF4444&color=fff&size=16" alt="" class="rounded-circle" width="16" height="16" /><span>Tom</span></label>
       </div>
     </div>
     <div class="filter-foot">
-      <button class="filter-btn-reset"><i class="bi bi-x-circle me-1"></i>Reset All</button>
-      <button class="filter-btn-apply"><i class="bi bi-check-lg me-1"></i>Apply Filters</button>
+      <button class="filter-btn-reset" id="filterResetBtn"><i class="bi bi-x-circle me-1"></i>Reset All</button>
+      <button class="filter-btn-apply" id="filterApplyBtn"><i class="bi bi-check-lg me-1"></i>Apply Filters</button>
     </div>
   </div>
 </div>
+
+<script src="src/app.js"></script>
 
 </body>
 </html>

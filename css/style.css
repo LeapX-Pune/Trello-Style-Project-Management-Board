@@ -179,6 +179,14 @@ img    { display: block; }
   background: var(--c-surface); border-color: var(--c-blue);
   color: var(--c-blue); transform: translateY(-1px); box-shadow: var(--sh-sm);
 }
+.hd-btn-icon--active {
+  background: var(--c-blue); border-color: var(--c-blue);
+  color: #fff;
+}
+.hd-btn-icon--active:hover {
+  background: var(--c-blue); border-color: var(--c-blue);
+  color: #fff; transform: none; box-shadow: var(--sh-sm);
+}
 
 .pos-rel { position: relative; }
 
@@ -353,6 +361,7 @@ img    { display: block; }
 .board-main {
   flex: 1; overflow: hidden;
   display: flex; flex-direction: column;
+  background: var(--c-bg);
 }
 
 /* Board topbar */
