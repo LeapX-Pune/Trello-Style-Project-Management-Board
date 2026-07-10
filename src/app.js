@@ -617,6 +617,20 @@ function init() {
     render();
   });
 
+  // ── Dark theme toggle ──────────────────────────────────────
+  const themeBtn = document.getElementById('themeToggleBtn');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const savedTheme = localStorage.getItem('projectflow-theme');
+  if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+    document.body.classList.add('dark-theme');
+    themeBtn.innerHTML = '<i class="bi bi-sun"></i>';
+  }
+  themeBtn.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark-theme');
+    localStorage.setItem('projectflow-theme', isDark ? 'dark' : 'light');
+    themeBtn.innerHTML = isDark ? '<i class="bi bi-sun"></i>' : '<i class="bi bi-moon-stars"></i>';
+  });
+
   const activityBtn = document.getElementById('activityToggleBtn');
   const activitySidebar = document.getElementById('activitySidebar');
   if (activityBtn && activitySidebar) {
