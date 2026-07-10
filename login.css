@@ -68,6 +68,7 @@ ul     { list-style: none; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ============================================================
@@ -79,7 +80,7 @@ ul     { list-style: none; }
   flex-direction: column;
   padding: 44px 52px;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* clip decorative blobs */
 }
 
 /* Decorative blobs */
@@ -267,6 +268,7 @@ ul     { list-style: none; }
   padding: 48px 32px;
   background: var(--c-surface);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* ─── LOGIN CARD ───────────────────────────────────────────── */
@@ -447,6 +449,8 @@ ul     { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 20px;
 }
 
@@ -615,111 +619,168 @@ ul     { list-style: none; }
 }
 
 /* ============================================================
-   RESPONSIVE — Tablet (≤ 900px)
+   RESPONSIVE — Laptop / Large Tablet (≤ 1100px)
 ============================================================ */
-@media (max-width: 900px) {
-  .wl-shell {
-    grid-template-columns: 1fr 1.2fr;
-  }
-
-  .wl-left {
-    padding: 32px 28px;
-  }
-
-  .wl-hero-title {
-    font-size: 28px;
-  }
-
-  .wl-hero-sub {
-    font-size: 13.5px;
-  }
-
-  .wl-card {
-    padding: 28px 24px 22px;
-  }
+@media (max-width: 1100px) {
+  .wl-left { padding: 36px 36px; }
+  .wl-hero-title { font-size: 32px; }
 }
 
 /* ============================================================
-   RESPONSIVE — Mobile (≤ 640px)
+   RESPONSIVE — Tablet (768px – 1023px)
 ============================================================ */
-@media (max-width: 640px) {
+@media (min-width: 768px) and (max-width: 1023px) {
   .wl-shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 1.3fr;
   }
 
   .wl-left {
-    padding: 28px 24px 32px;
+    padding: 28px 24px;
+  }
+
+  .wl-brand { margin-bottom: 32px; }
+
+  .wl-hero-title { font-size: 26px; }
+  .wl-hero-sub   { font-size: 13px; max-width: 100%; }
+  .wl-hero       { margin-bottom: 24px; }
+
+  .wl-features   { margin-bottom: 24px; gap: 10px; }
+  .wl-feat-title { font-size: 12px; }
+  .wl-feat-desc  { font-size: 11px; }
+
+  /* Keep illustration but make it smaller */
+  .wl-svg { max-width: 320px; }
+
+  .wl-right { padding: 32px 20px; }
+
+  .wl-card { padding: 28px 24px 22px; max-width: 380px; }
+}
+
+/* ============================================================
+   RESPONSIVE — Mobile (< 768px)
+   Layout: Blue hero panel TOP → Sign-in card BOTTOM
+============================================================ */
+@media (max-width: 767px) {
+
+  /* Single-column stacked layout */
+  .wl-shell {
+    display: flex;
     flex-direction: column;
+    min-height: 100vh;
   }
 
-  /* Move illustration above form */
-  .wl-illustration {
-    order: -1;
-    margin-bottom: 0;
-    margin-top: 16px;
-    flex: 0;
+  /* ── Blue panel — TOP, compact hero strip ── */
+  .wl-left {
+    order: 1;
+    flex: none;
+    padding: 28px 20px 24px;
+    min-height: unset;
   }
 
-  .wl-svg {
-    max-width: 300px;
-    margin: 0 auto;
-    display: block;
-  }
+  /* Tighten brand area */
+  .wl-brand        { margin-bottom: 20px; }
+  .wl-brand-name   { font-size: 15px; }
+  .wl-brand-tag    { font-size: 10px; }
 
-  .wl-hero {
-    margin-bottom: 20px;
-  }
+  /* Hero copy — smaller */
+  .wl-hero         { margin-bottom: 16px; }
+  .wl-hero-title   { font-size: 22px; letter-spacing: -.4px; }
+  .wl-hero-title br { display: none; } /* keep on one line */
+  .wl-hero-sub     { font-size: 13px; max-width: 100%; }
 
-  .wl-hero-title {
-    font-size: 26px;
-  }
-
+  /* Feature pills — compact 2-column grid */
   .wl-features {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 0;
   }
-
   .wl-feat {
-    flex: 1;
-    min-width: 140px;
-    background: rgba(255,255,255,.09);
-    padding: 10px 10px;
+    flex: 1 1 calc(50% - 4px);
+    min-width: 130px;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.15);
+    padding: 8px 10px;
     border-radius: var(--r-sm);
+    gap: 8px;
+  }
+  .wl-feat-icon  { width: 28px; height: 28px; font-size: 13px; }
+  .wl-feat-title { font-size: 12px; }
+  .wl-feat-desc  { font-size: 11px; }
+
+  /* Hide illustration and quote — not needed on mobile hero strip */
+  .wl-illustration { display: none; }
+  .wl-quote        { display: none; }
+
+  /* ── White sign-in panel — BOTTOM, fills remaining height ── */
+  .wl-right {
+    order: 2;
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 20px 40px;
+    background: var(--c-bg);
+    overflow-y: auto;
   }
 
-  .wl-quote { display: none; }
-
-  .wl-right {
-    padding: 32px 20px 40px;
+  /* Card fills full width, no extra shadow needed */
+  .wl-card {
+    width: 100%;
+    max-width: 100%;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 24px 4px 16px;
     background: var(--c-bg);
   }
 
-  .wl-card {
-    border: none;
-    box-shadow: none;
-    padding: 0;
-    max-width: 100%;
-  }
-
+  .wl-card-head  { margin-bottom: 20px; }
+  .wl-card-logo  { width: 44px; height: 44px; font-size: 20px; margin-bottom: 12px; }
   .wl-card-title { font-size: 20px; }
+  .wl-card-sub   { font-size: 13px; }
 
-  .wl-btn {
-    height: 50px;
-    font-size: 15px;
-  }
+  /* Touch-friendly inputs & buttons */
+  .wl-input { height: 46px; font-size: 14px; }
+  .wl-btn   { height: 48px; font-size: 14px; }
 
-  .wl-btn--skip {
-    height: 50px;
-    font-size: 14.5px;
-  }
+  .wl-row-util    { margin-bottom: 18px; }
+  .wl-check-label { font-size: 13px; }
+  .wl-forgot      { font-size: 13px; }
+
+  .wl-signup { margin-top: 16px; font-size: 13px; }
 }
 
-/* ─── Very small screens ───────────────────────────────────── */
-@media (max-width: 360px) {
-  .wl-left { padding: 22px 18px 24px; }
-  .wl-hero-title { font-size: 22px; }
-  .wl-right { padding: 24px 16px 32px; }
+/* ============================================================
+   RESPONSIVE — Small Mobile (375px)
+============================================================ */
+@media (max-width: 639px) {
+  .wl-left  { padding: 24px 16px 20px; }
+  .wl-right { padding: 28px 16px 36px; }
+
+  .wl-hero-title { font-size: 21px; }
+  .wl-feat { flex: 1 1 calc(50% - 4px); }
+}
+
+/* ============================================================
+   RESPONSIVE — Very Small (< 375px)
+============================================================ */
+@media (max-width: 374px) {
+  .wl-left  { padding: 20px 14px 18px; }
+  .wl-right { padding: 24px 14px 32px; }
+
+  .wl-hero-title  { font-size: 19px; }
+  .wl-card-title  { font-size: 18px; }
+
+  /* Stack features to single column on very small */
+  .wl-feat { flex: 1 1 100%; min-width: 100%; }
+
+  .wl-input { height: 44px; }
+  .wl-btn   { height: 46px; }
+
+  .wl-row-util {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }
