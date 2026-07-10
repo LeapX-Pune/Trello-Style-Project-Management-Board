@@ -3,19 +3,30 @@
 /**
  * Validates task input fields.
  * @param {string} title - The title of the task.
+ * @param {string} description - The description of the task.
  * @param {string} dueDate - The due date string (YYYY-MM-DD).
  * @returns {object} An object containing { isValid: boolean, message: string }.
  */
-export function validateTaskInput(title, dueDate) {
+export function validateTaskInput(title, description, dueDate) {
     if (!title || title.trim() === "") {
         return { isValid: false, message: "Task title cannot be empty." };
+    }
+    
+    if (!description || description.trim() === "") {
+        return { isValid: false, message: "Task description cannot be empty." };
     }
     
     if (dueDate) {
         const today = new Date();
         today.setHours(0, 0, 0, 0); // normalize today's date to midnight
         
-        const selectedDate = new Date(dueDate);
+        // Parse due date in local time to avoid timezone mismatch
+        let selectedDate;
+        if (typeof dueDate === 'string' && !dueDate.includes('T')) {
+            selectedDate = new Date(dueDate + 'T00:00:00');
+        } else {
+            selectedDate = new Date(dueDate);
+        }
         selectedDate.setHours(0, 0, 0, 0); // normalize selected date to midnight
         
         if (selectedDate < today) {

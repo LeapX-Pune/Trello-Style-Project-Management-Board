@@ -208,15 +208,37 @@ function saveTask() {
     return;
   }
 
+  const descInput = document.getElementById('mfDesc');
+  const description = descInput ? descInput.value.trim() : '';
+  if (!description) {
+    const err = document.getElementById('form-error-message');
+    if (err) { err.textContent = 'Task description is required.'; err.style.display = 'block'; }
+    return;
+  }
+
+  const dueDateInput = document.getElementById('mfDueDate');
+  const dueDate = dueDateInput ? dueDateInput.value : '';
+  if (dueDate) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(dueDate + 'T00:00:00');
+    selectedDate.setHours(0, 0, 0, 0);
+    if (selectedDate < today) {
+      const err = document.getElementById('form-error-message');
+      if (err) { err.textContent = 'Due date cannot be in the past.'; err.style.display = 'block'; }
+      return;
+    }
+  }
+
   const getVal = id => { const e = document.getElementById(id); return e ? e.value : ''; };
   const task = {
     id: editingTaskId || Date.now(),
     title,
-    description: getVal('mfDesc'),
+    description,
     priority: getVal('mfPriority'),
     column: getVal('mfStatus'),
     assignee: getVal('mfAssignee'),
-    dueDate: getVal('mfDueDate')
+    dueDate
   };
 
   if (editingTaskId) {
