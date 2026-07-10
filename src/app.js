@@ -11,19 +11,63 @@ let tasks = [
   { id: 10, title: 'Design tokens', description: 'Define design token system', assignee: 'Priya Kapoor', dueDate: '2026-07-25', priority: 'Medium', column: 'Backlog' }
 ];
 
+let columns = ['Backlog', 'To Do', 'In Progress', 'Review', 'Done'];
+let activities = [];
 let currentFilters = { searchQuery: '', priority: [], status: ['Backlog', 'To Do', 'In Progress', 'Review', 'Done'], assignee: [] };
 let editingTaskId = null;
+let nextTaskId = 11;
+let draggedTaskId = null;
+let touchDrag = { active: false, taskId: null };
+let aid = 0;
+let openDropdown = null;
 
 const app = document.getElementById('app');
+const USER = 'Alex Johnson';
+
+const COLUMN_META = {
+  'Backlog':     { icon: 'inbox',        iconClass: 'kol-icon--backlog', activeClass: '' },
+  'To Do':       { icon: 'circle',       iconClass: 'kol-icon--todo',    activeClass: '' },
+  'In Progress': { icon: 'arrow-repeat', iconClass: 'kol-icon--prog',   activeClass: ' kol--active' },
+  'Review':      { icon: 'eye',          iconClass: 'kol-icon--review',  activeClass: '' },
+  'Done':        { icon: 'check2-all',   iconClass: 'kol-icon--done',    activeClass: ' kol--done' }
+};
+
+const MEMBER_COLORS = {
+  'Alex Johnson': '2563EB', 'Sara Lee': '8B5CF6', 'Marcus Chen': '059669',
+  'Priya Kapoor': 'F59E0B', 'Tom Rivera': 'EF4444'
+};
+
+const LABEL_MAP = {
+  'Critical': ['Design','Branding','Goal'],
+  'High': ['Design','Dev'],
+  'Medium': ['Dev','Content'],
+  'Low': ['Research']
+};
+
+function getPriorityClass(p) { return { 'Critical':'crit', 'High':'high', 'Medium':'med', 'Low':'low' }[p] || 'med'; }
+function getPriorityIcon(p) { return { 'Critical':'fire', 'High':'arrow-up', 'Medium':'dash', 'Low':'arrow-down' }[p] || 'dash'; }
+
+function getDefaultIcon() { return 'columns'; }
+
+function getDeadlineStatus(dueDate) {
+  if (!dueDate) return { cls: 'due--normal', icon: 'calendar3', text: 'No date' };
+  const today = new Date(); today.setHours(0,0,0,0);
+  const due = new Date(dueDate + 'T00:00:00');
+  const diff = Math.ceil((due - today) / (1000*60*60*24));
+  if (diff < 0) return { cls: 'due--overdue', icon: 'exclamation-circle', text: 'Overdue' };
+  if (diff <= 2) return { cls: 'due--approaching', icon: 'clock', text: diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+  return { cls: 'due--far', icon: 'check-circle', text: due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+}
+
+function getLabels(p) { return LABEL_MAP[p] || ['Design']; }
+function getLabelClass(l) { return 'lbl lbl--' + l.toLowerCase().replace(/\s+/g, ''); }
 
 function filterTasks(tasks, criteria) {
   const { searchQuery, priority, status, assignee } = criteria;
   return tasks.filter(task => {
     if (searchQuery && searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase().trim();
-      if (!task.title.toLowerCase().includes(q) && !(task.description || '').toLowerCase().includes(q)) {
-        return false;
-      }
+      if (!task.title.toLowerCase().includes(q) && !(task.description || '').toLowerCase().includes(q)) return false;
     }
     if (priority && Array.isArray(priority) && priority.length > 0) {
       if (!priority.includes(task.priority)) return false;
@@ -38,69 +82,166 @@ function filterTasks(tasks, criteria) {
   });
 }
 
-function getPriorityClass(p) { return { 'Critical': 'crit', 'High': 'high', 'Medium': 'med', 'Low': 'low' }[p] || 'med'; }
-function getPriorityIcon(p) { return { 'Critical': 'fire', 'High': 'arrow-up', 'Medium': 'dash', 'Low': 'arrow-down' }[p] || 'dash'; }
-
-function getDueInfo(dueDate) {
-  if (!dueDate) return { cls: 'due--normal', icon: 'calendar3', text: 'No date' };
-  const today = new Date(); today.setHours(0,0,0,0);
-  const due = new Date(dueDate + 'T00:00:00');
-  const diff = Math.ceil((due - today) / (1000*60*60*24));
-  if (diff < 0) return { cls: 'due--overdue', icon: 'exclamation-circle', text: 'Overdue' };
-  if (diff === 0) return { cls: 'due--today', icon: 'calendar-check', text: 'Today' };
-  if (diff === 1) return { cls: 'due--tomorrow', icon: 'clock', text: 'Tomorrow' };
-  return { cls: 'due--normal', icon: 'calendar3', text: due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+function addActivity(action, taskName, details) {
+  activities.unshift({ id: ++aid, user: USER, action, taskName, details: details || '', timestamp: new Date() });
+  renderActivityLog();
 }
 
-const COLUMN_META = {
-  'Backlog':     { icon: 'inbox',        iconClass: 'kol-icon--backlog', activeClass: '' },
-  'To Do':       { icon: 'circle',       iconClass: 'kol-icon--todo',    activeClass: '' },
-  'In Progress': { icon: 'arrow-repeat', iconClass: 'kol-icon--prog',   activeClass: ' kol--active' },
-  'Review':      { icon: 'eye',          iconClass: 'kol-icon--review',  activeClass: '' },
-  'Done':        { icon: 'check2-all',   iconClass: 'kol-icon--done',    activeClass: ' kol--done' }
-};
+function getTimeAgo(date) {
+  const now = new Date();
+  const diff = Math.floor((now - date) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' hr ago';
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
 
-const LABEL_MAP = { 'Critical': ['Design','Branding','Goal'], 'High': ['Design','Dev'], 'Medium': ['Dev','Content'], 'Low': ['Research'] };
-function getLabels(p) { return LABEL_MAP[p] || ['Design']; }
-function getLabelClass(l) { return 'lbl lbl--' + l.toLowerCase().replace(/\s+/g, ''); }
+function getGroupLabel(date) {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  if (d.getTime() === today.getTime()) return 'Today';
+  if (d.getTime() === yesterday.getTime()) return 'Yesterday';
+  return 'Earlier';
+}
+
+function renderActivityLog() {
+  const feed = document.getElementById('activityFeed');
+  if (!feed) return;
+  const groups = {};
+  activities.forEach(a => {
+    const label = getGroupLabel(a.timestamp);
+    if (!groups[label]) groups[label] = [];
+    groups[label].push(a);
+  });
+  const order = ['Today', 'Yesterday', 'Earlier'];
+  let html = '';
+  order.forEach(label => {
+    if (!groups[label]) return;
+    html += `<div class="rs-group"><div class="rs-group-lbl">${label}</div>`;
+    groups[label].forEach(a => {
+      const ac = MEMBER_COLORS[a.user] || '64748B';
+      const actionText = a.action === 'moved' ? `moved <span class="rs-task">"${a.taskName}"</span> ${a.details}` :
+        a.action === 'created' ? `created <span class="rs-task">"${a.taskName}"</span>` :
+        a.action === 'edited' ? `updated <span class="rs-task">"${a.taskName}"</span>` :
+        a.action === 'deleted' ? `deleted <span class="rs-task">"${a.taskName}"</span>` :
+        `${a.action} <span class="rs-task">"${a.taskName}"</span>`;
+      html += `<div class="rs-item"><img src="https://ui-avatars.com/api/?name=${encodeURIComponent(a.user)}&background=${ac}&color=fff&size=28" alt="${a.user}" class="rs-av" /><div class="rs-content"><p class="rs-text"><strong>${a.user}</strong> ${actionText}</p><time class="rs-time">${getTimeAgo(a.timestamp)}</time></div></div>`;
+    });
+    html += `</div>`;
+  });
+  if (!html) html = '<div class="rs-group"><div class="rs-group-lbl" style="color:var(--c-muted);padding:8px 0;">No activity yet</div></div>';
+  feed.innerHTML = html;
+}
+
+function handleDragStart(e) {
+  draggedTaskId = parseInt(e.target.closest('.card-task').dataset.id);
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', draggedTaskId);
+  setTimeout(() => e.target.closest('.card-task').classList.add('dragging'), 0);
+}
+
+function handleDragEnd() {
+  document.querySelectorAll('.card-task').forEach(c => c.classList.remove('dragging'));
+  document.querySelectorAll('.kol').forEach(c => c.classList.remove('drag-over'));
+  draggedTaskId = null;
+}
+
+function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+
+function handleDragEnter(e) {
+  const col = e.target.closest('.kol');
+  if (col) col.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+  const col = e.target.closest('.kol');
+  if (col && !col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  const col = e.target.closest('.kol');
+  if (!col) return;
+  const colName = col.querySelector('.kol-title').textContent;
+  if (!draggedTaskId) return;
+  const task = tasks.find(t => t.id === draggedTaskId);
+  if (task && task.column !== colName) {
+    const oldCol = task.column;
+    task.column = colName;
+    addActivity('moved', task.title, `from ${oldCol} to ${colName}`);
+    render();
+  }
+  document.querySelectorAll('.kol').forEach(c => c.classList.remove('drag-over'));
+  draggedTaskId = null;
+}
+
+function handleTouchStart(e) {
+  const card = e.target.closest('.card-task');
+  if (!card) return;
+  if (e.target.closest('.edit-task-btn, .delete-task-btn, .ct-menu')) return;
+  touchDrag = { active: true, taskId: parseInt(card.dataset.id) };
+}
+
+function handleTouchMove(e) {
+  if (!touchDrag.active) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  document.querySelectorAll('.kol').forEach(c => c.classList.remove('drag-over'));
+  const col = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.kol');
+  if (col) col.classList.add('drag-over');
+}
+
+function handleTouchEnd() {
+  if (!touchDrag.active) return;
+  touchDrag.active = false;
+  const col = document.querySelector('.kol.drag-over');
+  if (col) {
+    const colName = col.querySelector('.kol-title').textContent;
+    const task = tasks.find(t => t.id === touchDrag.taskId);
+    if (task && task.column !== colName) {
+      const oldCol = task.column;
+      task.column = colName;
+      addActivity('moved', task.title, `from ${oldCol} to ${colName}`);
+      render();
+    }
+  }
+  document.querySelectorAll('.kol').forEach(c => c.classList.remove('drag-over'));
+  touchDrag.taskId = null;
+}
 
 function render() {
   const filteredTasks = filterTasks(tasks, currentFilters);
   const columnTasks = {};
-  Object.keys(COLUMN_META).forEach(c => columnTasks[c] = []);
+  columns.forEach(c => columnTasks[c] = []);
   filteredTasks.forEach(task => {
     if (columnTasks[task.column]) columnTasks[task.column].push(task);
-    else columnTasks['To Do'].push(task);
+    else columnTasks[columns[1]].push(task);
   });
 
   let html = '';
-  Object.entries(COLUMN_META).forEach(([name, meta]) => {
-    const colTasks = columnTasks[name];
+  columns.forEach((name, idx) => {
+    const meta = COLUMN_META[name] || { icon: getDefaultIcon(), iconClass: 'kol-icon--todo', activeClass: '' };
+    const colTasks = columnTasks[name] || [];
     const cardsHtml = colTasks.map(task => {
       const priClass = getPriorityClass(task.priority);
       const priIcon = getPriorityIcon(task.priority);
-      const due = getDueInfo(task.dueDate);
+      const due = getDeadlineStatus(task.dueDate);
       const labels = getLabels(task.priority);
       const an = task.assignee || 'Unassigned';
-      const ac = ['2563EB','8B5CF6','059669','F59E0B','EF4444'][Math.abs(task.id) % 5];
-      return `<article class="card-task${task.column === 'Done' ? ' card-task--done' : ''}" role="listitem" data-id="${task.id}">
+      const ac = MEMBER_COLORS[an] || '64748B';
+      return `<article class="card-task${task.column === 'Done' ? ' card-task--done' : ''}" draggable="true" role="listitem" data-id="${task.id}">
   <div class="ct-top">
     <span class="pri pri--${priClass}"><i class="bi bi-${priIcon}"></i>${task.priority}</span>
     ${task.column === 'Done' ? '<span class="ct-done-dot" aria-label="Completed"></span>' : '<button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>'}
   </div>
   <h3 class="ct-title${task.column === 'Done' ? ' ct-title--done' : ''}">${task.title}</h3>
-  <p class="ct-desc">${task.description || 'Add a short description for this task here.'}</p>
+  <p class="ct-desc">${task.description || ''}</p>
   <div class="ct-labels">${labels.map(l => `<span class="${getLabelClass(l)}">${l}</span>`).join('')}</div>
-  <div class="ct-checklist">
-    <i class="bi bi-check2-square ct-chk-icon"></i>
-    <div class="ct-chk-bar"><div class="ct-chk-fill" style="width:${task.column === 'Done' ? '100' : '0'}%"></div></div>
-    <span class="ct-chk-txt">${task.column === 'Done' ? 'Done' : '0 / 0'}</span>
-  </div>
   <div class="ct-foot">
     <span class="due ${due.cls}"><i class="bi bi-${due.icon}"></i>${due.text}</span>
     <div class="ct-meta">
-      <span class="ct-stat"><i class="bi bi-chat"></i>${Math.floor(Math.random() * 10)}</span>
-      <span class="ct-stat"><i class="bi bi-paperclip"></i>${Math.floor(Math.random() * 5)}</span>
       <button class="edit-task-btn" data-id="${task.id}" aria-label="Edit task" style="background:none;border:none;color:var(--c-primary);cursor:pointer;padding:0 4px;font-size:13px;"><i class="bi bi-pencil"></i></button>
       <button class="delete-task-btn" data-id="${task.id}" aria-label="Delete task" style="background:none;border:none;color:var(--c-danger);cursor:pointer;padding:0 4px;font-size:13px;"><i class="bi bi-trash"></i></button>
       <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(an)}&background=${ac}&color=fff&size=22" alt="${an}" class="ct-av" title="${an}" />
@@ -108,14 +249,14 @@ function render() {
   </div>
 </article>`;
     }).join('');
-    html += `<div class="kol${meta.activeClass}" aria-label="${name} column">
+    html += `<div class="kol${meta.activeClass}" aria-label="${name} column" data-column="${name}">
   <div class="kol-head">
     <div class="kol-head-l">
       <div class="kol-icon ${meta.iconClass}"><i class="bi bi-${meta.icon}"></i></div>
       <span class="kol-title">${name}</span>
       <span class="kol-count">${colTasks.length}</span>
     </div>
-    <button class="kol-menu" aria-label="${name} options"><i class="bi bi-three-dots"></i></button>
+    <button class="kol-menu" data-col="${idx}" aria-label="${name} options"><i class="bi bi-three-dots"></i></button>
   </div>
   <div class="kol-cards" role="list">
     ${cardsHtml || '<p style="color:var(--c-muted);font-size:13px;padding:16px;text-align:center;">No tasks</p>'}
@@ -123,57 +264,237 @@ function render() {
   <button class="kol-add add-task-btn" data-column="${name}" aria-label="Add task to ${name}"><i class="bi bi-plus-lg"></i>Add Task</button>
 </div>`;
   });
-  html += '<div class="kol-add-col" role="button" tabindex="0" aria-label="Add new column"><i class="bi bi-plus-circle"></i><span>Add Column</span></div>';
+  html += '<div class="kol-add-col" id="addColumnBtn" role="button" tabindex="0" aria-label="Add new column"><i class="bi bi-plus-circle"></i><span>Add Column</span></div>';
   app.innerHTML = html;
   updateStats();
-  attachCardListeners();
+  attachListeners();
 }
 
 function updateStats() {
   const $ = id => document.getElementById(id);
   const s = (id, v) => { const e = $(id); if (e) e.textContent = v; };
   s('statTotal', tasks.length);
-  s('statCompleted', tasks.filter(t => t.column === 'Done').length);
+  const done = tasks.filter(t => t.column === 'Done').length;
+  s('statCompleted', done);
   s('statPending', tasks.filter(t => t.column !== 'Done').length);
   const today = new Date(); today.setHours(0,0,0,0);
-  s('statOverdue', tasks.filter(t => t.dueDate && new Date(t.dueDate+'T00:00:00') < today && t.column !== 'Done').length);
+  const overdue = tasks.filter(t => t.dueDate && new Date(t.dueDate+'T00:00:00') < today && t.column !== 'Done').length;
+  s('statOverdue', overdue);
+  const pct = tasks.length > 0 ? Math.round((done / tasks.length) * 100) : 0;
+  s('sprintPct', pct + '%');
+  const fill = document.getElementById('sprintFill');
+  if (fill) { fill.style.width = pct + '%'; fill.style.animation = 'none'; fill.offsetHeight; fill.style.animation = ''; }
+  const track = fill?.parentElement;
+  if (track) { track.setAttribute('aria-valuenow', pct); track.setAttribute('aria-label', 'Sprint progress ' + pct + '%'); }
+  s('notifBadge', overdue > 0 ? overdue : '');
 }
 
-function attachCardListeners() {
-  document.querySelectorAll('.edit-task-btn').forEach(btn => {
-    btn.addEventListener('click', e => { e.stopPropagation(); openEditModal(parseInt(btn.getAttribute('data-id'))); });
+function updateFilterStatusOptions() {
+  const chips = document.getElementById('filterStatus');
+  if (!chips) return;
+  chips.innerHTML = columns.map(c => {
+    const checked = currentFilters.status.includes(c) ? ' checked' : '';
+    const on = checked ? ' fchip--on' : '';
+    return `<label class="fchip${on}" tabindex="0"><input type="checkbox" class="visually-hidden" value="${c}"${checked} /><span>${c}</span></label>`;
+  }).join('');
+}
+
+function closeAllDropdowns() {
+  if (openDropdown) { openDropdown.remove(); openDropdown = null; }
+}
+
+function attachListeners() {
+  document.querySelectorAll('.card-task').forEach(card => {
+    card.addEventListener('dragstart', handleDragStart);
+    card.addEventListener('dragend', handleDragEnd);
+    card.addEventListener('touchstart', handleTouchStart, { passive: true });
+    card.addEventListener('touchmove', handleTouchMove, { passive: false });
+    card.addEventListener('touchend', handleTouchEnd);
   });
+  document.querySelectorAll('.kol').forEach(col => {
+    col.addEventListener('dragover', handleDragOver);
+    col.addEventListener('dragenter', handleDragEnter);
+    col.addEventListener('dragleave', handleDragLeave);
+    col.addEventListener('drop', handleDrop);
+  });
+
+  document.querySelectorAll('.edit-task-btn').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); openEditModal(parseInt(btn.dataset.id)); });
+  });
+
   document.querySelectorAll('.delete-task-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      const id = parseInt(btn.getAttribute('data-id'));
+      const id = parseInt(btn.dataset.id);
+      const task = tasks.find(t => t.id === id);
       if (confirm('Delete this task?')) {
         tasks = tasks.filter(t => t.id !== id);
+        if (task) addActivity('deleted', task.title);
         if (editingTaskId === id) editingTaskId = null;
         render();
       }
     });
   });
+
   document.querySelectorAll('.add-task-btn').forEach(btn => {
-    btn.addEventListener('click', () => { editingTaskId = null; openModal(btn.getAttribute('data-column')); });
+    btn.addEventListener('click', () => { editingTaskId = null; openModal(btn.dataset.column); });
+  });
+
+  document.getElementById('addColumnBtn')?.addEventListener('click', () => {
+    const name = prompt('Enter column name:');
+    if (name && name.trim()) {
+      const n = name.trim();
+      columns.push(n);
+      COLUMN_META[n] = { icon: getDefaultIcon(), iconClass: 'kol-icon--todo', activeClass: '' };
+      if (!currentFilters.status.includes(n)) currentFilters.status.push(n);
+      updateFilterStatusOptions();
+      render();
+    }
+  });
+
+  document.querySelectorAll('.kol-menu').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      closeAllDropdowns();
+      const idx = parseInt(btn.dataset.col);
+      const colName = columns[idx];
+      const rect = btn.getBoundingClientRect();
+      const dd = document.createElement('div');
+      dd.className = 'kol-context-menu';
+
+      function posMenu() {
+        const r = btn.getBoundingClientRect();
+        Object.assign(dd.style, {
+          position: 'fixed', background: '#fff', border: '1.5px solid var(--c-border)',
+          borderRadius: 'var(--r-sm)', boxShadow: 'var(--sh-md)', zIndex: '999',
+          minWidth: '140px', overflow: 'hidden',
+          left: Math.min(r.left, window.innerWidth - 160) + 'px',
+          top: r.bottom + 4 + 'px'
+        });
+      }
+
+      posMenu();
+      const scrollArea = document.querySelector('.brd-scroll-area');
+      const onScroll = () => { if (dd.isConnected) { posMenu(); } else { scrollArea?.removeEventListener('scroll', onScroll); } };
+      scrollArea?.addEventListener('scroll', onScroll, { passive: true });
+
+      if (idx > 0) {
+        const rb = document.createElement('button');
+        rb.innerHTML = '<i class="bi bi-pencil me-2"></i>Rename';
+        Object.assign(rb.style, { display: 'flex', alignItems: 'center', gap: '6px', width: '100%', padding: '8px 12px', border: 'none', background: 'transparent', fontSize: '13px', cursor: 'pointer' });
+        rb.addEventListener('mouseenter', () => rb.style.background = 'var(--c-surface)');
+        rb.addEventListener('mouseleave', () => rb.style.background = 'transparent');
+        rb.addEventListener('click', () => {
+          dd.remove(); openDropdown = null;
+          const newName = prompt('Rename column:', colName);
+          if (newName && newName.trim() && newName !== colName) {
+            const n = newName.trim();
+            columns[idx] = n;
+            tasks.forEach(t => { if (t.column === colName) t.column = n; });
+            COLUMN_META[n] = COLUMN_META[colName] || { icon: getDefaultIcon(), iconClass: 'kol-icon--todo', activeClass: '' };
+            delete COLUMN_META[colName];
+            const si = currentFilters.status.indexOf(colName);
+            if (si > -1) currentFilters.status[si] = n;
+            updateFilterStatusOptions();
+            render();
+          }
+        });
+        dd.appendChild(rb);
+
+        const db = document.createElement('button');
+        db.innerHTML = '<i class="bi bi-trash me-2"></i>Delete';
+        Object.assign(db.style, { display: 'flex', alignItems: 'center', gap: '6px', width: '100%', padding: '8px 12px', border: 'none', background: 'transparent', fontSize: '13px', cursor: 'pointer', color: 'var(--c-red)' });
+        db.addEventListener('mouseenter', () => db.style.background = '#FFF1F2');
+        db.addEventListener('mouseleave', () => db.style.background = 'transparent');
+        db.addEventListener('click', () => {
+          dd.remove(); openDropdown = null;
+          if (confirm(`Delete "${colName}" column and all its tasks?`)) {
+            tasks = tasks.filter(t => t.column !== colName);
+            columns.splice(idx, 1);
+            delete COLUMN_META[colName];
+            currentFilters.status = currentFilters.status.filter(s => s !== colName);
+            updateFilterStatusOptions();
+            render();
+          }
+        });
+        dd.appendChild(db);
+      } else {
+        const msg = document.createElement('div');
+        msg.textContent = 'Cannot remove default column';
+        Object.assign(msg.style, { padding: '8px 12px', fontSize: '12px', color: 'var(--c-muted)' });
+        dd.appendChild(msg);
+      }
+
+      document.body.appendChild(dd);
+      openDropdown = dd;
+    });
+  });
+}
+
+function setupAssigneeDropdown() {
+  const wrap = document.getElementById('assigneeWrap');
+  const trigger = document.getElementById('assigneeTrigger');
+  const dropdown = document.getElementById('assigneeDropdown');
+  const av = document.getElementById('assigneeAv');
+  const display = document.getElementById('assigneeDisplay');
+  const hidden = document.getElementById('mfAssignee');
+  if (!wrap || !trigger || !dropdown) return;
+
+  const close = () => { wrap.classList.remove('open'); };
+  const open = () => { wrap.classList.add('open'); };
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    wrap.classList.toggle('open');
+  });
+
+  dropdown.querySelectorAll('.assignee-opt').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const val = opt.dataset.value;
+      dropdown.querySelectorAll('.assignee-opt').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      if (val) {
+        const ac = MEMBER_COLORS[val] || '64748B';
+        av.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(val)}&background=${ac}&color=fff&size=20`;
+        av.style.display = 'block';
+        display.textContent = val;
+        display.className = '';
+      } else {
+        av.style.display = 'none';
+        display.textContent = 'Unassigned';
+        display.className = 'assignee-placeholder';
+      }
+      hidden.value = val;
+      close();
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!wrap.contains(e.target)) close();
   });
 }
 
 function openModal(defaultStatus) {
   const modal = document.getElementById('modalCreate');
   if (!modal) return;
+  editingTaskId = null;
   modal.style.display = 'flex';
   document.getElementById('modalCreateTitle').textContent = 'Create New Task';
   document.getElementById('modalSaveBtn').innerHTML = '<i class="bi bi-plus-lg"></i> Create Task';
   document.getElementById('mfTitle').value = '';
   document.getElementById('mfDesc').value = '';
   document.getElementById('mfPriority').value = 'Medium';
-  document.getElementById('mfStatus').value = defaultStatus || 'To Do';
-  document.getElementById('mfAssignee').value = '';
+  const statusSelect = document.getElementById('mfStatus');
+  statusSelect.innerHTML = columns.map(c => `<option value="${c}"${c === (defaultStatus || 'To Do') ? ' selected' : ''}>${c}</option>`).join('');
   document.getElementById('mfDueDate').value = '';
   const err = document.getElementById('form-error-message');
   if (err) err.style.display = 'none';
-  editingTaskId = null;
+  const av = document.getElementById('assigneeAv');
+  if (av) { av.style.display = 'none'; }
+  const disp = document.getElementById('assigneeDisplay');
+  if (disp) { disp.textContent = 'Unassigned'; disp.className = 'assignee-placeholder'; }
+  document.getElementById('mfAssignee').value = '';
 }
 
 function openEditModal(id) {
@@ -186,7 +507,18 @@ function openEditModal(id) {
   document.getElementById('mfTitle').value = task.title;
   document.getElementById('mfDesc').value = task.description || '';
   document.getElementById('mfPriority').value = task.priority;
-  document.getElementById('mfStatus').value = task.column;
+  const statusSelect = document.getElementById('mfStatus');
+  statusSelect.innerHTML = columns.map(c => `<option value="${c}"${c === task.column ? ' selected' : ''}>${c}</option>`).join('');
+  const av = document.getElementById('assigneeAv');
+  const disp = document.getElementById('assigneeDisplay');
+  if (task.assignee) {
+    const ac = MEMBER_COLORS[task.assignee] || '64748B';
+    if (av) { av.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(task.assignee)}&background=${ac}&color=fff&size=20`; av.style.display = 'block'; }
+    if (disp) { disp.textContent = task.assignee; disp.className = ''; }
+  } else {
+    if (av) av.style.display = 'none';
+    if (disp) { disp.textContent = 'Unassigned'; disp.className = 'assignee-placeholder'; }
+  }
   document.getElementById('mfAssignee').value = task.assignee || '';
   document.getElementById('mfDueDate').value = task.dueDate || '';
   const err = document.getElementById('form-error-message');
@@ -194,8 +526,7 @@ function openEditModal(id) {
 }
 
 function closeModal() {
-  const modal = document.getElementById('modalCreate');
-  if (modal) modal.style.display = 'none';
+  document.getElementById('modalCreate').style.display = 'none';
 }
 
 function saveTask() {
@@ -209,20 +540,33 @@ function saveTask() {
   }
 
   const getVal = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+  const dueDate = getVal('mfDueDate');
+
+  if (dueDate) {
+    const today = new Date(); today.setHours(0,0,0,0);
+    if (new Date(dueDate + 'T00:00:00') < today) {
+      const err = document.getElementById('form-error-message');
+      if (err) { err.textContent = 'Due date cannot be in the past.'; err.style.display = 'block'; }
+      return;
+    }
+  }
+
   const task = {
-    id: editingTaskId || Date.now(),
+    id: editingTaskId || nextTaskId++,
     title,
     description: getVal('mfDesc'),
     priority: getVal('mfPriority'),
     column: getVal('mfStatus'),
     assignee: getVal('mfAssignee'),
-    dueDate: getVal('mfDueDate')
+    dueDate
   };
 
   if (editingTaskId) {
     tasks = tasks.map(t => t.id === editingTaskId ? { ...t, ...task } : t);
+    addActivity('edited', task.title);
   } else {
     tasks.push(task);
+    addActivity('created', task.title);
   }
   closeModal();
   render();
@@ -247,53 +591,31 @@ function resetFilters() {
   document.querySelectorAll('#filterPriority input[type="checkbox"]').forEach(cb => cb.checked = false);
   document.querySelectorAll('#filterStatus input[type="checkbox"]').forEach(cb => cb.checked = true);
   document.querySelectorAll('#filterAssignee input[type="checkbox"]').forEach(cb => cb.checked = false);
-  const alexCb = document.querySelector('#filterAssignee input[value="Alex Johnson"]');
-  if (alexCb) alexCb.checked = true;
   applyFilters();
 }
 
-function openFilterPanel() { const p = document.getElementById('filterPanel'); if (p) p.style.display = 'block'; }
-function closeFilterPanel() { const p = document.getElementById('filterPanel'); if (p) p.style.display = 'none'; }
+function openFilterPanel() { document.getElementById('filterPanel').style.display = 'block'; }
+function closeFilterPanel() { document.getElementById('filterPanel').style.display = 'none'; }
+
+document.addEventListener('click', closeAllDropdowns, true);
 
 function init() {
-  const newTaskBtn = document.getElementById('newTaskBtn');
-  if (newTaskBtn) newTaskBtn.addEventListener('click', () => openModal('To Do'));
+  document.getElementById('newTaskBtn')?.addEventListener('click', () => openModal('To Do'));
+  document.getElementById('modalCloseBtn')?.addEventListener('click', closeModal);
+  document.getElementById('modalCancelBtn')?.addEventListener('click', closeModal);
+  document.getElementById('modalSaveBtn')?.addEventListener('click', saveTask);
+  document.getElementById('modalCreate')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 
-  const modalClose = document.getElementById('modalCloseBtn');
-  if (modalClose) modalClose.addEventListener('click', closeModal);
+  document.getElementById('filterToggleBtn')?.addEventListener('click', openFilterPanel);
+  document.getElementById('filterCloseBtn')?.addEventListener('click', closeFilterPanel);
+  document.getElementById('filterApplyBtn')?.addEventListener('click', applyFilters);
+  document.getElementById('filterResetBtn')?.addEventListener('click', resetFilters);
+  document.getElementById('filterPanel')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeFilterPanel(); });
 
-  const modalCancel = document.getElementById('modalCancelBtn');
-  if (modalCancel) modalCancel.addEventListener('click', closeModal);
-
-  const modalSave = document.getElementById('modalSaveBtn');
-  if (modalSave) modalSave.addEventListener('click', saveTask);
-
-  const modalBg = document.getElementById('modalCreate');
-  if (modalBg) modalBg.addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
-
-  const filterToggle = document.getElementById('filterToggleBtn');
-  if (filterToggle) filterToggle.addEventListener('click', openFilterPanel);
-
-  const filterClose = document.getElementById('filterCloseBtn');
-  if (filterClose) filterClose.addEventListener('click', closeFilterPanel);
-
-  const filterApply = document.getElementById('filterApplyBtn');
-  if (filterApply) filterApply.addEventListener('click', applyFilters);
-
-  const filterReset = document.getElementById('filterResetBtn');
-  if (filterReset) filterReset.addEventListener('click', resetFilters);
-
-  const filterBg = document.getElementById('filterPanel');
-  if (filterBg) filterBg.addEventListener('click', e => { if (e.target === e.currentTarget) closeFilterPanel(); });
-
-  const searchInput = document.querySelector('.hd-search-input');
-  if (searchInput) {
-    searchInput.addEventListener('input', e => {
-      currentFilters.searchQuery = e.target.value;
-      render();
-      e.target.focus();
-    });
-  }
+  document.querySelector('.hd-search-input')?.addEventListener('input', e => {
+    currentFilters.searchQuery = e.target.value;
+    render();
+  });
 
   const activityBtn = document.getElementById('activityToggleBtn');
   const activitySidebar = document.getElementById('activitySidebar');
@@ -302,7 +624,6 @@ function init() {
       const isMobile = window.innerWidth < 768;
       if (isMobile) {
         const opening = !activitySidebar.classList.contains('is-open');
-        // close left drawer if open
         closeMobileDrawers(true, false);
         activitySidebar.classList.toggle('is-open', opening);
         activityBtn.classList.toggle('hd-btn-icon--active', opening);
@@ -323,7 +644,6 @@ function init() {
   if (mobileMenuBtn && sidebarLeft) {
     mobileMenuBtn.addEventListener('click', () => {
       const opening = !sidebarLeft.classList.contains('is-open');
-      // close right drawer if open
       closeMobileDrawers(false, true);
       sidebarLeft.classList.toggle('is-open', opening);
       mobileMenuBtn.setAttribute('aria-expanded', String(opening));
@@ -331,17 +651,25 @@ function init() {
     });
   }
 
-  // Close drawers when overlay is tapped
   if (drawerOverlay) {
     drawerOverlay.addEventListener('click', () => closeMobileDrawers(true, true));
   }
 
-  // Close drawers on resize to desktop
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 768) {
       closeMobileDrawers(true, true);
     }
   });
+
+  setupAssigneeDropdown();
+  updateFilterStatusOptions();
+  const now = Date.now();
+  activities.push({ id: ++aid, user: USER, action: 'moved', taskName: 'Logo variations', details: 'from Review to Done', timestamp: new Date(now - 1000*60*2) });
+  activities.push({ id: ++aid, user: USER, action: 'created', taskName: 'Social media asset kit', details: '', timestamp: new Date(now - 1000*60*60) });
+  activities.push({ id: ++aid, user: USER, action: 'moved', taskName: 'Email templates', details: 'from In Progress to Review', timestamp: new Date(now - 1000*60*60*2) });
+  activities.push({ id: ++aid, user: USER, action: 'edited', taskName: 'Design tokens', details: '', timestamp: new Date(now - 1000*60*60*24) });
+  activities.push({ id: ++aid, user: USER, action: 'created', taskName: 'Color palette', details: '', timestamp: new Date(now - 1000*60*60*48) });
+  renderActivityLog();
 
   render();
 }
