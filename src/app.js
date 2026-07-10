@@ -301,8 +301,12 @@ function init() {
     activityBtn.addEventListener('click', () => {
       const isMobile = window.innerWidth < 768;
       if (isMobile) {
-        activitySidebar.classList.toggle('is-open');
-        activityBtn.classList.toggle('hd-btn-icon--active', activitySidebar.classList.contains('is-open'));
+        const opening = !activitySidebar.classList.contains('is-open');
+        // close left drawer if open
+        closeMobileDrawers(true, false);
+        activitySidebar.classList.toggle('is-open', opening);
+        activityBtn.classList.toggle('hd-btn-icon--active', opening);
+        setDrawerOverlay(opening);
       } else {
         const shown = activitySidebar.style.display !== 'none';
         activitySidebar.style.display = shown ? 'none' : 'flex';
@@ -311,7 +315,65 @@ function init() {
     });
   }
 
+  // ── Mobile hamburger menu (left sidebar drawer) ─────────────
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const sidebarLeft   = document.querySelector('.sidebar-left');
+  const drawerOverlay = document.getElementById('drawerOverlay');
+
+  if (mobileMenuBtn && sidebarLeft) {
+    mobileMenuBtn.addEventListener('click', () => {
+      const opening = !sidebarLeft.classList.contains('is-open');
+      // close right drawer if open
+      closeMobileDrawers(false, true);
+      sidebarLeft.classList.toggle('is-open', opening);
+      mobileMenuBtn.setAttribute('aria-expanded', String(opening));
+      setDrawerOverlay(opening);
+    });
+  }
+
+  // Close drawers when overlay is tapped
+  if (drawerOverlay) {
+    drawerOverlay.addEventListener('click', () => closeMobileDrawers(true, true));
+  }
+
+  // Close drawers on resize to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 768) {
+      closeMobileDrawers(true, true);
+    }
+  });
+
   render();
+}
+
+/** Toggle the translucent backdrop overlay. */
+function setDrawerOverlay(visible) {
+  const overlay = document.getElementById('drawerOverlay');
+  if (overlay) overlay.classList.toggle('is-visible', visible);
+}
+
+/**
+ * Close mobile drawers.
+ * @param {boolean} left  - close left sidebar
+ * @param {boolean} right - close right sidebar
+ */
+function closeMobileDrawers(left, right) {
+  if (left) {
+    const sidebarLeft = document.querySelector('.sidebar-left');
+    const menuBtn     = document.getElementById('mobileMenuBtn');
+    if (sidebarLeft) sidebarLeft.classList.remove('is-open');
+    if (menuBtn)     menuBtn.setAttribute('aria-expanded', 'false');
+  }
+  if (right) {
+    const sidebarRight = document.getElementById('activitySidebar');
+    const activityBtn  = document.getElementById('activityToggleBtn');
+    if (sidebarRight) sidebarRight.classList.remove('is-open');
+    if (activityBtn)  activityBtn.classList.remove('hd-btn-icon--active');
+  }
+  const anyOpen =
+    (left  ? false : document.querySelector('.sidebar-left')?.classList.contains('is-open'))   ||
+    (right ? false : document.getElementById('activitySidebar')?.classList.contains('is-open'));
+  setDrawerOverlay(!!anyOpen);
 }
 
 init();

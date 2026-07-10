@@ -16,6 +16,10 @@
 <!-- HEADER -->
 <header class="app-header" role="banner">
   <div class="header-inner">
+    <!-- Mobile menu toggle — visible only on mobile -->
+    <button class="hd-menu-toggle" id="mobileMenuBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+      <i class="bi bi-list"></i>
+    </button>
     <div class="hd-brand">
       <div class="brand-logo"><i class="bi bi-layers-fill"></i></div>
       <div class="brand-text">
@@ -181,6 +185,9 @@
 </aside>
 
 </div><!-- /app-shell -->
+
+<!-- MOBILE DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
 
 <!-- CREATE TASK MODAL -->
 <div class="modal-bg" id="modalCreate" role="dialog" aria-modal="true" aria-labelledby="modalCreateTitle" style="display:none;">

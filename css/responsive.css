@@ -3,12 +3,16 @@
    Breakpoints:
    ≥ 1280px  Desktop  — 5 columns, full sidebars
    1024–1279 Laptop   — 4 columns, compact sidebars
-    768–1023 Tablet   — 3 columns, icon-only left sidebar, no right sidebar
-      < 768  Mobile   — horizontal scroll, hidden sidebars, sticky header
+    768–1023 Tablet   — columns scroll, icon-only left sidebar, no right sidebar
+      < 768  Mobile   — columns scroll, hidden sidebars, sticky header
+      < 375  Very Small — tighter padding/sizing
 ============================================================ */
 
 /* ─── DESKTOP ≥ 1280px ───────────────────────────────────── */
 /* Default layout is defined in style.css — no overrides needed */
+
+/* Hide mobile-only elements on desktop/tablet */
+.hd-menu-toggle { display: none; }
 
 /* ─── LAPTOP 1024px – 1279px ─────────────────────────────── */
 @media (min-width: 1024px) and (max-width: 1279px) {
@@ -38,21 +42,28 @@
 
   /* Header */
   .header-inner { padding: 0 14px; gap: 8px; }
-  .hd-search    { width: 170px; }
-  .brand-ws, .hd-project-name, .hd-uname, .hd-ucaret,
+  .hd-search    { width: 180px; flex-shrink: 1; }
+  .hd-search-kbd { display: none; }
+  .brand-ws,
+  .hd-project-name,
+  .hd-uname,
+  .hd-ucaret,
   .hd-btn-pill span { display: none; }
 
   /* Left Sidebar — icon only */
   .sidebar-left {
-    width: var(--w-sb-left); min-width: var(--w-sb-left);
-    padding: 12px 0; align-items: center;
+    width: var(--w-sb-left);
+    min-width: var(--w-sb-left);
+    padding: 12px 0;
+    align-items: center;
   }
   .sb-nav   { padding: 0 6px; align-items: center; }
-  .sb-link span, .sb-badge { display: none; }
   .sb-link  { justify-content: center; padding: 10px; }
+  .sb-link span,
+  .sb-badge { display: none; }
   .sb-link--active::before { display: none; }
-  .sb-section, .sb-divider { display: none; }
-  .sb-nav + .sb-divider    { display: block; }
+  .sb-section { display: none; }
+  .sb-divider { display: none; }
 
   /* Right sidebar — hidden */
   .sidebar-right { display: none; }
@@ -62,6 +73,10 @@
   .brd-scroll-area { padding: 0 14px 14px; gap: 12px; }
   .brd-topbar { padding: 14px 14px 10px; }
   .brd-title  { font-size: 15px; }
+
+  /* Board topbar wraps on tablet */
+  .brd-topbar { flex-wrap: wrap; gap: 8px; }
+  .brd-topbar-left { flex: 1; min-width: 0; }
   .brd-av-more { display: none; }
 }
 
@@ -73,50 +88,131 @@
     --w-sb-right: 0px;
   }
 
-  /* Header */
+  /* ── Header ── */
   .app-header { box-shadow: 0 2px 12px rgba(15,23,42,.10); }
+
   .header-inner {
-    padding: 0 12px; gap: 7px;
-    overflow: hidden;
+    padding: 0 12px;
+    gap: 8px;
+    overflow: visible; /* allow notification badge to show */
   }
 
-  /* Hide on mobile */
-  .hd-project, .hd-sep,
-  .hd-btn-pill, .hd-uname, .hd-ucaret,
-  .hd-btn-icon:not([aria-label="Notifications"]):not([aria-label="Settings"]) {
-    display: none !important;
+  /* Hamburger — show on mobile */
+  .hd-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border: 1.5px solid var(--c-border);
+    border-radius: var(--r-sm);
+    background: var(--c-bg);
+    color: var(--c-txt2);
+    font-size: 18px;
+    transition: all var(--t);
+  }
+  .hd-menu-toggle:hover {
+    background: var(--c-surface);
+    border-color: var(--c-blue);
+    color: var(--c-blue);
   }
 
-  .hd-search { flex: 1; min-width: 0; width: auto; }
+  /* Brand — keep logo, hide text */
+  .brand-ws   { display: none; }
+  .brand-text { display: none; }
+  .brand-logo { width: 30px; height: 30px; font-size: 14px; flex-shrink: 0; }
+
+  /* Project picker — hide on mobile */
+  .hd-project { display: none; }
+
+  /* Separators — hide on mobile */
+  .hd-sep { display: none; }
+
+  /* Search — takes remaining space */
+  .hd-spacer { display: none; }
+  .hd-search {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+  }
   .hd-search-kbd { display: none; }
 
-  .brand-ws { display: none; }
-  .brand-text { display: none; }
-  .brand-logo { width: 30px; height: 30px; font-size: 14px; }
+  /* Controls — only keep notification bell, activity, and new task btn */
+  .hd-controls { gap: 6px; flex-shrink: 0; }
 
-  /* Compact new task button — icon only */
+  /* Hide filter/sort pills */
+  .hd-btn-pill { display: none; }
+
+  /* Hide settings and user avatar text */
+  .hd-uname   { display: none; }
+  .hd-ucaret  { display: none; }
+
+  /* Hide most icon buttons except bell and activity (clock-history) */
+  .hd-btn-icon { display: none; }
+  .hd-btn-icon[aria-label="Notifications"],
+  .hd-btn-icon[aria-label="Toggle activity log"] {
+    display: inline-flex;
+  }
+
+  /* Avatar — keep image, lose text decorations */
+  .hd-avatar-wrap { padding: 2px 4px; gap: 0; }
+  .hd-avatar { width: 28px; height: 28px; }
+
+  /* New Task button — icon only */
   .hd-btn-primary span { display: none; }
-  .hd-btn-primary { width: 34px; padding: 0; justify-content: center; }
+  .hd-btn-primary {
+    width: 34px;
+    padding: 0;
+    justify-content: center;
+    flex-shrink: 0;
+  }
 
-  /* Sidebars — hidden */
-  .sidebar-left, .sidebar-right { display: none; }
+  /* ── App Shell ── */
+  /* Sidebars hidden by default on mobile */
+  .sidebar-left  { display: none; }
+  .sidebar-right { display: none; }
 
-  /* Board */
-  .brd-topbar { padding: 12px 12px 10px; flex-wrap: wrap; gap: 8px; }
-  .brd-topbar-left { gap: 8px; }
-  .brd-title  { font-size: 14px; }
+  /* ── Board ── */
+  .board-main { width: 100%; }
+
+  .brd-topbar {
+    padding: 10px 12px 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .brd-topbar-left {
+    flex: 1;
+    min-width: 0;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .brd-topbar-right {
+    flex-shrink: 0;
+    gap: 8px;
+  }
+  .brd-title  { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .brd-sub    { font-size: 11px; }
   .brd-sprint-tag { font-size: 10px; padding: 2px 8px; }
 
+  /* Columns scroll area */
   .brd-scroll-area {
-    padding: 0 12px 14px; gap: 10px;
+    padding: 4px 12px 16px;
+    gap: 10px;
     -webkit-overflow-scrolling: touch;
+    /* Ensure columns don't wrap — they scroll horizontally */
+    flex-wrap: nowrap;
   }
 
+  /* Column sizing */
   .kol { width: 255px; min-width: 255px; }
 
-  /* Compact cards on mobile */
+  /* Hide card description on mobile for space */
   .ct-desc { display: none; }
+
+  /* Compact card padding */
   .card-task { padding: 10px; }
 
   /* Avatar stack compact */
@@ -125,41 +221,89 @@
   .brd-view-btn { width: 28px; height: 26px; }
 }
 
-/* ─── VERY SMALL  < 375px ─────────────────────────────────── */
+/* ─── VERY SMALL < 375px ─────────────────────────────────── */
 @media (max-width: 374px) {
   .kol { width: 238px; min-width: 238px; }
-  .header-inner { padding: 0 10px; }
+
+  .header-inner { padding: 0 10px; gap: 6px; }
+  .hd-search-input { font-size: 12px; }
   .brd-title { font-size: 13px; }
+
+  .brd-topbar { padding: 8px 10px; }
+  .brd-scroll-area { padding: 4px 10px 14px; }
 }
 
 /* ============================================================
-   MOBILE DRAWER — sidebar opens as overlay
-   (CSS structure; toggled by adding .is-open class via JS later)
+   MOBILE DRAWER — sidebar opens as overlay when .is-open
+   Toggled by JS via the hamburger / activity buttons
 ============================================================ */
+
+/* Overlay backdrop */
+.drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: var(--h-header);
+  background: rgba(15, 23, 42, 0.4);
+  z-index: 799;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.drawer-overlay.is-visible { display: block; }
+
 @media (max-width: 767px) {
+  /* Left drawer */
   .sidebar-left.is-open {
-    display: flex; flex-direction: column;
-    position: fixed; top: var(--h-header); left: 0; bottom: 0;
-    width: 240px; min-width: 240px; z-index: 800;
-    background: var(--c-surface); border-right: 1px solid var(--c-border);
-    box-shadow: 4px 0 24px rgba(15,23,42,.12);
-    overflow-y: auto; padding: 14px 0;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: var(--h-header);
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    min-width: 260px;
+    z-index: 800;
+    background: var(--c-surface);
+    border-right: 1px solid var(--c-border);
+    box-shadow: 4px 0 24px rgba(15, 23, 42, 0.14);
+    overflow-y: auto;
+    padding: 14px 0;
     animation: drawerIn .25s ease;
   }
+
+  /* Restore sidebar content when open on mobile */
+  .sidebar-left.is-open .sb-section,
+  .sidebar-left.is-open .sb-divider { display: block; }
+  .sidebar-left.is-open .sb-nav { padding: 0 10px; align-items: stretch; }
+  .sidebar-left.is-open .sb-link { justify-content: flex-start; padding: 8px 10px; }
+  .sidebar-left.is-open .sb-link span,
+  .sidebar-left.is-open .sb-badge { display: inline-flex; }
+  .sidebar-left.is-open .sb-link--active::before { display: block; }
+
   @keyframes drawerIn {
     from { transform: translateX(-100%); }
     to   { transform: translateX(0); }
   }
 
+  /* Right drawer */
   .sidebar-right.is-open {
-    display: flex; flex-direction: column;
-    position: fixed; top: var(--h-header); right: 0; bottom: 0;
-    width: 272px; min-width: 272px; z-index: 800;
-    background: var(--c-bg); border-left: 1px solid var(--c-border);
-    box-shadow: -4px 0 24px rgba(15,23,42,.12);
-    overflow-y: auto; padding: 18px 15px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: var(--h-header);
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    min-width: 280px;
+    z-index: 800;
+    background: var(--c-bg);
+    border-left: 1px solid var(--c-border);
+    box-shadow: -4px 0 24px rgba(15, 23, 42, 0.14);
+    overflow-y: auto;
+    padding: 18px 15px;
     animation: drawerInR .25s ease;
   }
+
   @keyframes drawerInR {
     from { transform: translateX(100%); }
     to   { transform: translateX(0); }
@@ -170,26 +314,64 @@
    FILTER PANEL — bottom sheet on mobile
 ============================================================ */
 @media (max-width: 767px) {
-  .filter-box {
-    position: fixed; top: auto; bottom: 0; right: 0; left: 0;
-    width: 100%; max-width: 100%; border-radius: 18px 18px 0 0;
-    max-height: 80vh;
+  .filter-bg {
+    align-items: flex-end;
+    padding: 0;
   }
+
+  .filter-box {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 18px 18px 0 0;
+    max-height: 82vh;
+    overflow-y: auto;
+    /* Prevent content from going under safe-area on notched phones */
+    padding-bottom: max(22px, env(safe-area-inset-bottom));
+  }
+
+  .filter-chips { gap: 8px; }
+  .fchip { font-size: 13px; padding: 6px 12px; }
 }
 
 /* ============================================================
    MODAL — bottom sheet on mobile
 ============================================================ */
 @media (max-width: 767px) {
-  .modal-bg   { align-items: flex-end; padding: 0; }
-  .modal-box  { max-width: 100%; border-radius: 18px 18px 0 0; padding: 20px 16px; max-height: 92vh; }
+  .modal-bg  { align-items: flex-end; padding: 0; }
+  .modal-box {
+    max-width: 100%;
+    border-radius: 18px 18px 0 0;
+    padding: 20px 16px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    max-height: 92vh;
+  }
+
+  /* Stack the 2-column form rows on mobile */
+  .modal-box .row.g-3 { flex-direction: column; }
+  .modal-box .row.g-3 > .col-6 {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .modal-box-foot { gap: 10px; }
+  .modal-btn-cancel,
+  .modal-btn-create { flex: 1; justify-content: center; height: 42px; }
 }
 
 /* ============================================================
    PRINT
 ============================================================ */
 @media print {
-  .app-header, .sidebar-left, .sidebar-right { display: none !important; }
+  .app-header, .sidebar-left, .sidebar-right,
+  .drawer-overlay { display: none !important; }
   .app-shell { height: auto; overflow: visible; }
   .board-main { overflow: visible; }
   .brd-scroll-area { overflow: visible; flex-wrap: wrap; height: auto; }
