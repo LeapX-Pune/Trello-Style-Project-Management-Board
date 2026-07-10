@@ -1,0 +1,9 @@
+/* src/styles.css — do not override the main layout styles */
+/* Body and #app layout is managed by css/style.css */
+
+#app {
+  /* Reset any layout-breaking defaults */
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
