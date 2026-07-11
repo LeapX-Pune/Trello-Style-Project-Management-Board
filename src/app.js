@@ -1,4 +1,6 @@
-let tasks = [
+const TASKS_KEY = 'pf_tasks';
+
+const DEFAULT_TASKS = [
   { id: 1,  title: 'Write PRD document',              description: 'Draft the initial project requirement details',           assignee: 'Ankit Bhalke',   dueDate: '2026-07-10', priority: 'High',     column: 'In Progress' },
   { id: 2,  title: 'Design Landing Page UI',           description: 'Create basic layouts for home page',                     assignee: 'Khushi Shah',    dueDate: '2026-07-15', priority: 'Medium',   column: 'To Do' },
   { id: 3,  title: 'Implement Authentication',         description: 'Setup login/signup flows',                               assignee: 'Rehan Azim',     dueDate: '2026-07-20', priority: 'High',     column: 'To Do' },
@@ -10,6 +12,23 @@ let tasks = [
   { id: 9,  title: 'Logo variations',                  description: 'Create logo variations for different use cases',         assignee: 'Khushi Shah',    dueDate: '2026-07-09', priority: 'Critical', column: 'Done' },
   { id: 10, title: 'Design tokens',                    description: 'Define design token system',                             assignee: 'Sumit Tiwari',   dueDate: '2026-07-25', priority: 'Medium',   column: 'Backlog' }
 ];
+
+function loadTasks() {
+  try {
+    const saved = localStorage.getItem(TASKS_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return DEFAULT_TASKS.map(t => ({ ...t }));
+}
+
+function saveTasks() {
+  try { localStorage.setItem(TASKS_KEY, JSON.stringify(tasks)); } catch {}
+}
+
+let tasks = loadTasks();
 
 let currentFilters = { searchQuery: '', priority: [], status: ['Backlog', 'To Do', 'In Progress', 'Review', 'Done'], assignee: [] };
 let editingTaskId = null;
@@ -131,6 +150,7 @@ function buildCard(task) {
 }
 
 function render() {
+  saveTasks();
   if (currentView === 'list') return renderList();
   renderKanban();
 }
