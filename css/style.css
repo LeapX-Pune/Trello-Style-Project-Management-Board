@@ -675,6 +675,7 @@ img    { display: block; }
 }
 .lbl--design   { background: #EFF6FF; color: var(--c-blue); }
 .lbl--brand    { background: #FAF5FF; color: #7C3AED; }
+.lbl--branding { background: #FAF5FF; color: #7C3AED; }
 .lbl--dev      { background: #ECFDF5; color: #059669; }
 .lbl--content  { background: #FFF7ED; color: #C2410C; }
 .lbl--research { background: #F0F9FF; color: #0369A1; }

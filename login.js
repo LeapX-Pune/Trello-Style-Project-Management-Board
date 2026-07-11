@@ -189,9 +189,8 @@
     continueBtn.classList.add('wl-btn--loading');
     continueBtn.setAttribute('aria-busy', 'true');
 
-    // Save session — use matched account name, or email prefix if no account
-    const sessionUser = match || { name: emailInput.value.split('@')[0], email: emailInput.value.trim() };
-    saveSession(sessionUser);
+    // Save session
+    saveSession(match);
 
     setTimeout(function () {
       window.location.href = 'dashboard.html';

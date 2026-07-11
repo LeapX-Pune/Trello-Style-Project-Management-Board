@@ -120,8 +120,8 @@ function buildCard(task) {
   <div class="ct-foot">
     <span class="due ${due.cls}"><i class="bi bi-${due.icon}"></i>${due.text}${due.urgency ? `<span class="due-dot ${due.urgency}-dot" aria-hidden="true"></span>` : ''}</span>
     <div class="ct-meta">
-      <span class="ct-stat"><i class="bi bi-chat"></i>${Math.floor(Math.random() * 10)}</span>
-      <span class="ct-stat"><i class="bi bi-paperclip"></i>${Math.floor(Math.random() * 5)}</span>
+      <span class="ct-stat"><i class="bi bi-chat"></i>0</span>
+      <span class="ct-stat"><i class="bi bi-paperclip"></i>0</span>
       <button class="edit-task-btn" data-id="${task.id}" aria-label="Edit task" style="background:none;border:none;color:var(--c-primary);cursor:pointer;padding:0 4px;font-size:13px;"><i class="bi bi-pencil"></i></button>
       <button class="delete-task-btn" data-id="${task.id}" aria-label="Delete task" style="background:none;border:none;color:var(--c-danger);cursor:pointer;padding:0 4px;font-size:13px;"><i class="bi bi-trash"></i></button>
       <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(an)}&background=${ac}&color=fff&size=22" alt="${an}" class="ct-av" title="${an}" />
@@ -317,11 +317,6 @@ function saveTask() {
 
   const descInput = document.getElementById('mfDesc');
   const description = descInput ? descInput.value.trim() : '';
-  if (!description) {
-    const err = document.getElementById('form-error-message');
-    if (err) { err.textContent = 'Task description is required.'; err.style.display = 'block'; }
-    return;
-  }
 
   const dueDateInput = document.getElementById('mfDueDate');
   const dueDate = dueDateInput ? dueDateInput.value : '';
@@ -376,8 +371,6 @@ function resetFilters() {
   document.querySelectorAll('#filterPriority input[type="checkbox"]').forEach(cb => cb.checked = false);
   document.querySelectorAll('#filterStatus input[type="checkbox"]').forEach(cb => cb.checked = true);
   document.querySelectorAll('#filterAssignee input[type="checkbox"]').forEach(cb => cb.checked = false);
-  const ankitCb = document.querySelector('#filterAssignee input[value="Ankit Bhalke"]');
-  if (ankitCb) ankitCb.checked = true;
   applyFilters();
 }
 
@@ -420,7 +413,6 @@ function init() {
     searchInput.addEventListener('input', e => {
       currentFilters.searchQuery = e.target.value;
       render();
-      e.target.focus();
     });
   }
 
