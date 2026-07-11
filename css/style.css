@@ -959,3 +959,61 @@ img    { display: block; }
   transition: all var(--t);
 }
 .filter-btn-apply:hover { background: var(--c-blue-h); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,.32); }
+
+/* ============================================================
+   DRAG & DROP — style.css additions
+   All DnD visual states. No existing colours changed.
+============================================================ */
+
+/* ── Draggable cursor hint on cards ─────────────────────────── */
+.card-task {
+  cursor: grab;
+  /* Allow pointer events to fire on touch inside overflow:auto containers */
+  touch-action: pan-y; /* default: allow vertical scroll; drag.js overrides to 'none' */
+}
+.card-task:active {
+  cursor: grabbing;
+}
+
+/* ── Original card while it is being dragged ────────────────── */
+.card--dragging {
+  opacity: 0.28;
+  transform: scale(0.97);
+  box-shadow: none !important;
+  border-color: var(--c-border) !important;
+  pointer-events: none; /* lets elementFromPoint reach elements beneath */
+}
+
+/* ── Floating clone that follows the finger (touch drag) ─────── */
+.card--touch-clone {
+  position: absolute; /* absolute inside <body> — moves with scrollY offset */
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.90;
+  transform: scale(1.03) rotate(1deg);
+  box-shadow: 0 16px 48px rgba(37,99,235,.24), 0 4px 14px rgba(15,23,42,.16);
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--c-blue);
+  background: var(--c-card);
+  will-change: left, top;
+  /* No transition — must track the finger at 60fps without lag */
+}
+
+/* ── Blue dashed placeholder showing the drop position ──────── */
+.dnd-placeholder {
+  background: var(--c-blue-lt);
+  border: 2px dashed var(--c-blue);
+  border-radius: var(--r-md);
+  opacity: 0.6;
+  flex-shrink: 0;
+  pointer-events: none;
+  min-height: 44px; /* always visible even in empty columns */
+}
+
+/* ── Column highlighted as the active drop target ───────────── */
+.kol--drag-over {
+  border-color: var(--c-blue) !important;
+  border-width: 2px !important;
+  box-shadow: 0 0 0 4px rgba(37,99,235,.13) !important;
+  background: #EEF4FF !important;
+}
