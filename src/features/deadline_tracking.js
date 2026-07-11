@@ -58,4 +58,3 @@ export function getDeadlineBadgeHtml(dueDateString) {
     `;
 }
 
-// This code is written for rehan azim

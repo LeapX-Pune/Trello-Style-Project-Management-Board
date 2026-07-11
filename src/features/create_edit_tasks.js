@@ -88,4 +88,3 @@ export function getTaskFormHtml(task = null) {
     `;
 }
 
-// This code is written for rehan azim
