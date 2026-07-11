@@ -96,13 +96,40 @@ function getDueInfo(dueDate) {
   return           { cls: 'due--normal',  icon: 'calendar3',          text: due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), urgency: 'urgency--green' };
 }
 
-const COLUMN_META = {
+let COLUMN_META = {
   'Backlog':     { icon: 'inbox',        iconClass: 'kol-icon--backlog', activeClass: '' },
   'To Do':       { icon: 'circle',       iconClass: 'kol-icon--todo',    activeClass: '' },
   'In Progress': { icon: 'arrow-repeat', iconClass: 'kol-icon--prog',   activeClass: '' },
   'Review':      { icon: 'eye',          iconClass: 'kol-icon--review',  activeClass: '' },
   'Done':        { icon: 'check2-all',   iconClass: 'kol-icon--done',    activeClass: ' kol--done' }
 };
+
+function addColumn(name) {
+  if (!name || name.trim() === '') return;
+  const key = name.trim();
+  if (COLUMN_META[key]) return;
+  COLUMN_META[key] = { icon: 'plus', iconClass: 'kol-icon--backlog', activeClass: '' };
+  render();
+}
+
+function renameColumn(oldName, newName) {
+  if (!newName || newName.trim() === '' || !COLUMN_META[oldName]) return;
+  const key = newName.trim();
+  if (COLUMN_META[key] && key !== oldName) return;
+  COLUMN_META[key] = COLUMN_META[oldName];
+  if (key !== oldName) delete COLUMN_META[oldName];
+  tasks.forEach(t => { if (t.column === oldName) t.column = key; });
+  render();
+}
+
+function deleteColumn(name) {
+  if (!COLUMN_META[name]) return;
+  if (Object.keys(COLUMN_META).length <= 1) return;
+  const remaining = Object.keys(COLUMN_META).find(k => k !== name);
+  tasks.forEach(t => { if (t.column === name) t.column = remaining; });
+  delete COLUMN_META[name];
+  render();
+}
 
 const LABEL_MAP = { 'Critical': ['Design','Branding','Goal'], 'High': ['Design','Dev'], 'Medium': ['Dev','Content'], 'Low': ['Research'] };
 function getLabels(p) { return LABEL_MAP[p] || ['Design']; }
@@ -282,8 +309,40 @@ function attachCardListeners() {
     btn.addEventListener('click', () => { editingTaskId = null; openModal(btn.getAttribute('data-column')); });
   });
 
+  // Column management
+  document.querySelector('.kol-add-col')?.addEventListener('click', () => {
+    const name = prompt('Enter column name:');
+    if (name) addColumn(name);
+  });
+
+  document.querySelectorAll('.kol-menu').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const colName = btn.closest('.kol-head')?.querySelector('.kol-title')?.textContent;
+      if (!colName) return;
+      const action = prompt(`Column: "${colName}"\n\nEnter "rename" to rename, "delete" to delete, or leave blank to cancel:`);
+      if (!action) return;
+      if (action.toLowerCase() === 'rename') {
+        const newName = prompt('Enter new column name:', colName);
+        if (newName && newName.trim() !== colName) renameColumn(colName, newName.trim());
+      } else if (action.toLowerCase() === 'delete') {
+        if (confirm(`Delete column "${colName}"? All tasks will move to another column.`)) {
+          deleteColumn(colName);
+        }
+      }
+    });
+  });
+
   // Wire up drag & drop after every render
   if (typeof initDragDrop === 'function') initDragDrop();
+}
+
+function populateStatusDropdown() {
+  const sel = document.getElementById('mfStatus');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = Object.keys(COLUMN_META).map(k => `<option value="${k}">${k}</option>`).join('');
+  if (Object.keys(COLUMN_META).includes(current)) sel.value = current;
 }
 
 function openModal(defaultStatus) {
@@ -295,7 +354,8 @@ function openModal(defaultStatus) {
   document.getElementById('mfTitle').value = '';
   document.getElementById('mfDesc').value = '';
   document.getElementById('mfPriority').value = 'Medium';
-  document.getElementById('mfStatus').value = defaultStatus || 'To Do';
+  populateStatusDropdown();
+  document.getElementById('mfStatus').value = defaultStatus || Object.keys(COLUMN_META)[0] || 'To Do';
   document.getElementById('mfAssignee').value = '';
   document.getElementById('mfDueDate').value = '';
   
@@ -318,6 +378,7 @@ function openEditModal(id) {
   document.getElementById('mfTitle').value = task.title;
   document.getElementById('mfDesc').value = task.description || '';
   document.getElementById('mfPriority').value = task.priority;
+  populateStatusDropdown();
   document.getElementById('mfStatus').value = task.column;
   document.getElementById('mfAssignee').value = task.assignee || '';
   document.getElementById('mfDueDate').value = task.dueDate || '';

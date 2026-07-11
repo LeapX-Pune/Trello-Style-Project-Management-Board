@@ -11,6 +11,14 @@
   const USERS_KEY   = 'pf_users';
   const SESSION_KEY = 'pf_session';
 
+  /* ── Password hashing (SHA-256 via Web Crypto API) ────────── */
+  async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
   /* ── Load / save users from localStorage ──────────────────── */
   function getUsers() {
     try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; }
@@ -154,7 +162,7 @@
   setupFieldValidation(emailInput, fieldEmail, emailError, validateEmail);
   setupFieldValidation(passwordInput, fieldPassword, passwordError, validatePassword);
 
-  loginForm.addEventListener('submit', function (e) {
+  loginForm.addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const emailErr = validateEmail(emailInput.value);
@@ -170,19 +178,28 @@
       return;
     }
 
+    // Hash the input password for comparison
+    const hashedInput = await hashPassword(passwordInput.value);
+
     // Check credentials against stored users
     const users = getUsers();
-    const match = users.find(
-      u => u.email.toLowerCase() === emailInput.value.trim().toLowerCase()
-        && u.password === passwordInput.value
-    );
+    const match = users.find(u => {
+      if (u.email.toLowerCase() !== emailInput.value.trim().toLowerCase()) return false;
+      // Support both hashed and legacy plain-text passwords
+      return u.password === hashedInput || u.password === passwordInput.value;
+    });
 
     if (!match) {
-      // No matching account — show error regardless of whether users exist
       setFieldError(fieldEmail, emailError, 'Invalid email or password.');
       setFieldError(fieldPassword, passwordError, 'Invalid email or password.');
       emailInput.focus();
       return;
+    }
+
+    // Migrate legacy plain-text password to hashed
+    if (match.password !== hashedInput) {
+      match.password = hashedInput;
+      saveUsers(users);
     }
 
     // Valid — navigate to dashboard
@@ -243,7 +260,7 @@
     }
   });
 
-  registerForm.addEventListener('submit', function (e) {
+  registerForm.addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const nameErr  = validateName(regName.value);
@@ -283,11 +300,14 @@
       return;
     }
 
+    // Hash password before storing
+    const hashed = await hashPassword(regPassword.value);
+
     // Save new user
     users.push({
       name: regName.value.trim(),
       email: regEmail.value.trim().toLowerCase(),
-      password: regPassword.value,
+      password: hashed,
       createdAt: new Date().toISOString()
     });
     saveUsers(users);
