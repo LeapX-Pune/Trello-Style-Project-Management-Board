@@ -41,12 +41,12 @@
     </div>
     <div class="hd-controls">
       <button class="hd-btn-pill" id="filterToggleBtn" aria-label="Filter tasks"><i class="bi bi-funnel"></i><span>Filter</span></button>
-      <button class="hd-btn-pill" aria-label="Sort tasks"><i class="bi bi-arrow-down-up"></i><span>Sort</span></button>
+      <button class="hd-btn-pill" id="sortToggleBtn" aria-label="Sort tasks"><i class="bi bi-arrow-down-up"></i><span>Sort</span></button>
       <div class="hd-sep"></div>
-      <button class="hd-btn-icon pos-rel" aria-label="Notifications">
-        <i class="bi bi-bell"></i><span class="hd-notif">3</span>
+      <button class="hd-btn-icon pos-rel" id="notifBtn" aria-label="Notifications">
+        <i class="bi bi-bell"></i><span class="hd-notif" id="notifBadge">3</span>
       </button>
-      <button class="hd-btn-icon" aria-label="Settings"><i class="bi bi-gear"></i></button>
+      <button class="hd-btn-icon" id="settingsBtn" aria-label="Settings"><i class="bi bi-gear"></i></button>
       <button class="hd-btn-icon" id="activityToggleBtn" aria-label="Toggle activity log"><i class="bi bi-clock-history"></i></button>
       <div class="hd-avatar-wrap" role="button" tabindex="0" aria-label="User menu">
         <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=2563EB&color=fff&size=32" alt="Alex Johnson" class="hd-avatar" id="headerAvatar" />
@@ -171,7 +171,6 @@
       <div class="brd-view-toggle" role="group" aria-label="View options">
         <button class="brd-view-btn brd-view-btn--on" aria-pressed="true" aria-label="Kanban view"><i class="bi bi-kanban"></i></button>
         <button class="brd-view-btn" aria-pressed="false" aria-label="List view"><i class="bi bi-list-ul"></i></button>
-        <button class="brd-view-btn" aria-pressed="false" aria-label="Timeline view"><i class="bi bi-calendar-range"></i></button>
       </div>
       <div class="brd-av-stack">
         <img src="https://ui-avatars.com/api/?name=Ankit+Bhalke&background=2563EB&color=fff&size=28" alt="Ankit Bhalke" class="brd-av" title="Ankit Bhalke" />
@@ -380,6 +379,108 @@
     <div class="filter-foot">
       <button class="filter-btn-reset" id="filterResetBtn"><i class="bi bi-x-circle me-1"></i>Reset All</button>
       <button class="filter-btn-apply" id="filterApplyBtn"><i class="bi bi-check-lg me-1"></i>Apply Filters</button>
+    </div>
+  </div>
+</div>
+
+<!-- SORT PANEL -->
+<div class="sort-bg" id="sortPanel" style="display:none;">
+  <div class="sort-box">
+    <div class="filter-head">
+      <h2 class="filter-title"><i class="bi bi-arrow-down-up me-2"></i>Sort Tasks</h2>
+      <button class="modal-close" id="sortCloseBtn" aria-label="Close sort panel"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="sort-options">
+      <label class="sort-opt"><input type="radio" name="sortBy" value="none" checked /><span>Default order</span></label>
+      <label class="sort-opt"><input type="radio" name="sortBy" value="dueDate-asc" /><span><i class="bi bi-calendar-arrow-up"></i> Due date — earliest first</span></label>
+      <label class="sort-opt"><input type="radio" name="sortBy" value="dueDate-desc" /><span><i class="bi bi-calendar-arrow-down"></i> Due date — latest first</span></label>
+      <label class="sort-opt"><input type="radio" name="sortBy" value="priority-desc" /><span><i class="bi bi-fire"></i> Priority — highest first</span></label>
+      <label class="sort-opt"><input type="radio" name="sortBy" value="priority-asc" /><span><i class="bi bi-arrow-down"></i> Priority — lowest first</span></label>
+      <label class="sort-opt"><input type="radio" name="sortBy" value="title-asc" /><span><i class="bi bi-sort-alpha-down"></i> Title — A → Z</span></label>
+      <label class="sort-opt"><input type="radio" name="sortBy" value="title-desc" /><span><i class="bi bi-sort-alpha-up"></i> Title — Z → A</span></label>
+    </div>
+    <div class="filter-foot">
+      <button class="filter-btn-reset" id="sortResetBtn"><i class="bi bi-x-circle me-1"></i>Reset</button>
+      <button class="filter-btn-apply" id="sortApplyBtn"><i class="bi bi-check-lg me-1"></i>Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-bg" id="notifPanel" style="display:none;">
+  <div class="notif-box">
+    <div class="filter-head">
+      <h2 class="filter-title"><i class="bi bi-bell me-2"></i>Notifications</h2>
+      <button class="modal-close" id="notifCloseBtn" aria-label="Close notifications"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <ul class="notif-list" id="notifList">
+      <li class="notif-item notif-item--unread">
+        <div class="notif-icon notif-icon--blue"><i class="bi bi-arrow-right-circle"></i></div>
+        <div class="notif-content"><p class="notif-text"><strong>Sara Lee</strong> moved <span class="rs-task">"Logo variations"</span> to Review</p><time class="rs-time">2 min ago</time></div>
+        <span class="notif-dot"></span>
+      </li>
+      <li class="notif-item notif-item--unread">
+        <div class="notif-icon notif-icon--green"><i class="bi bi-chat"></i></div>
+        <div class="notif-content"><p class="notif-text"><strong>Marcus Chen</strong> commented on <span class="rs-task">"Email templates"</span></p><time class="rs-time">24 min ago</time></div>
+        <span class="notif-dot"></span>
+      </li>
+      <li class="notif-item notif-item--unread">
+        <div class="notif-icon notif-icon--yellow"><i class="bi bi-plus-circle"></i></div>
+        <div class="notif-content"><p class="notif-text"><strong>Alex Johnson</strong> created <span class="rs-task">"Social media asset kit"</span></p><time class="rs-time">1 hr ago</time></div>
+        <span class="notif-dot"></span>
+      </li>
+      <li class="notif-item">
+        <div class="notif-icon notif-icon--purple"><i class="bi bi-check2-all"></i></div>
+        <div class="notif-content"><p class="notif-text"><strong>Priya Kapoor</strong> completed a checklist item on <span class="rs-task">"Design tokens"</span></p><time class="rs-time">2 hr ago</time></div>
+      </li>
+      <li class="notif-item">
+        <div class="notif-icon notif-icon--red"><i class="bi bi-exclamation-circle"></i></div>
+        <div class="notif-content"><p class="notif-text"><span class="rs-task">"New color palette"</span> is <strong>overdue</strong></p><time class="rs-time">Jul 9</time></div>
+      </li>
+    </ul>
+    <button class="notif-mark-all" id="markAllReadBtn"><i class="bi bi-check2-all me-1"></i>Mark all as read</button>
+  </div>
+</div>
+
+<!-- SETTINGS PANEL -->
+<div class="settings-bg" id="settingsPanel" style="display:none;">
+  <div class="settings-box">
+    <div class="filter-head">
+      <h2 class="filter-title"><i class="bi bi-gear me-2"></i>Settings</h2>
+      <button class="modal-close" id="settingsCloseBtn" aria-label="Close settings"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="settings-section">
+      <div class="settings-sec-lbl">Appearance</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <span class="settings-row-title">Compact cards</span>
+          <span class="settings-row-desc">Hide card descriptions to fit more tasks</span>
+        </div>
+        <label class="toggle-switch" aria-label="Toggle compact cards">
+          <input type="checkbox" id="settingCompact" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <span class="settings-row-title">Show avatars on cards</span>
+          <span class="settings-row-desc">Display assignee avatar on each task card</span>
+        </div>
+        <label class="toggle-switch" aria-label="Toggle avatars">
+          <input type="checkbox" id="settingAvatars" checked />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-sec-lbl">Data</div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <span class="settings-row-title">Clear saved accounts</span>
+          <span class="settings-row-desc">Remove all registered users from local storage</span>
+        </div>
+        <button class="settings-btn-danger" id="clearAccountsBtn">Clear</button>
+      </div>
     </div>
   </div>
 </div>
