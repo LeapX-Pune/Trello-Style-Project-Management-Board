@@ -278,6 +278,11 @@ function openModal(defaultStatus) {
   document.getElementById('mfStatus').value = defaultStatus || 'To Do';
   document.getElementById('mfAssignee').value = '';
   document.getElementById('mfDueDate').value = '';
+  
+  const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD format in local time
+  const dueDateEl = document.getElementById('mfDueDate');
+  if (dueDateEl) dueDateEl.setAttribute('min', todayStr);
+  
   const err = document.getElementById('form-error-message');
   if (err) err.style.display = 'none';
   editingTaskId = null;
@@ -296,6 +301,11 @@ function openEditModal(id) {
   document.getElementById('mfStatus').value = task.column;
   document.getElementById('mfAssignee').value = task.assignee || '';
   document.getElementById('mfDueDate').value = task.dueDate || '';
+  
+  const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD format in local time
+  const dueDateEl = document.getElementById('mfDueDate');
+  if (dueDateEl) dueDateEl.setAttribute('min', todayStr);
+  
   const err = document.getElementById('form-error-message');
   if (err) err.style.display = 'none';
 }
@@ -317,6 +327,11 @@ function saveTask() {
 
   const descInput = document.getElementById('mfDesc');
   const description = descInput ? descInput.value.trim() : '';
+  if (!description) {
+    const err = document.getElementById('form-error-message');
+    if (err) { err.textContent = 'Task description is required.'; err.style.display = 'block'; }
+    return;
+  }
 
   const dueDateInput = document.getElementById('mfDueDate');
   const dueDate = dueDateInput ? dueDateInput.value : '';
