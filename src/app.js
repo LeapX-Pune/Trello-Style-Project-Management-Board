@@ -13,6 +13,8 @@ let tasks = [
 
 let currentFilters = { searchQuery: '', priority: [], status: ['Backlog', 'To Do', 'In Progress', 'Review', 'Done'], assignee: [] };
 let editingTaskId = null;
+let currentView = 'kanban'; // 'kanban' | 'list'
+let currentSort = 'none';   // sort key | 'timeline'
 
 const app = document.getElementById('app');
 
@@ -41,21 +43,44 @@ function filterTasks(tasks, criteria) {
 function getPriorityClass(p) { return { 'Critical': 'crit', 'High': 'high', 'Medium': 'med', 'Low': 'low' }[p] || 'med'; }
 function getPriorityIcon(p) { return { 'Critical': 'fire', 'High': 'arrow-up', 'Medium': 'dash', 'Low': 'arrow-down' }[p] || 'dash'; }
 
+const PRIORITY_ORDER = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
+
+function sortTasks(arr) {
+  if (currentSort === 'none') return arr;
+  const copy = [...arr];
+  switch (currentSort) {
+    case 'dueDate-asc':
+      return copy.sort((a, b) => (a.dueDate || '9999') < (b.dueDate || '9999') ? -1 : 1);
+    case 'dueDate-desc':
+      return copy.sort((a, b) => (a.dueDate || '0000') > (b.dueDate || '0000') ? -1 : 1);
+    case 'priority-desc':
+      return copy.sort((a, b) => (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0));
+    case 'priority-asc':
+      return copy.sort((a, b) => (PRIORITY_ORDER[a.priority] || 0) - (PRIORITY_ORDER[b.priority] || 0));
+    case 'title-asc':
+      return copy.sort((a, b) => a.title.localeCompare(b.title));
+    case 'title-desc':
+      return copy.sort((a, b) => b.title.localeCompare(a.title));
+    default: return copy;
+  }
+}
+
 function getDueInfo(dueDate) {
-  if (!dueDate) return { cls: 'due--normal', icon: 'calendar3', text: 'No date' };
+  if (!dueDate) return { cls: 'due--normal', icon: 'calendar3', text: 'No date', urgency: '' };
   const today = new Date(); today.setHours(0,0,0,0);
   const due = new Date(dueDate + 'T00:00:00');
   const diff = Math.ceil((due - today) / (1000*60*60*24));
-  if (diff < 0) return { cls: 'due--overdue', icon: 'exclamation-circle', text: 'Overdue' };
-  if (diff === 0) return { cls: 'due--today', icon: 'calendar-check', text: 'Today' };
-  if (diff === 1) return { cls: 'due--tomorrow', icon: 'clock', text: 'Tomorrow' };
-  return { cls: 'due--normal', icon: 'calendar3', text: due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+  if (diff < 0)  return { cls: 'due--overdue',  icon: 'exclamation-circle', text: 'Overdue',              urgency: 'urgency--red' };
+  if (diff === 0) return { cls: 'due--today',    icon: 'calendar-check',     text: 'Today',               urgency: 'urgency--yellow' };
+  if (diff === 1) return { cls: 'due--tomorrow', icon: 'clock',              text: 'Tomorrow',            urgency: 'urgency--yellow' };
+  if (diff <= 3)  return { cls: 'due--soon',     icon: 'calendar-event',     text: due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), urgency: 'urgency--yellow' };
+  return           { cls: 'due--normal',  icon: 'calendar3',          text: due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), urgency: 'urgency--green' };
 }
 
 const COLUMN_META = {
   'Backlog':     { icon: 'inbox',        iconClass: 'kol-icon--backlog', activeClass: '' },
   'To Do':       { icon: 'circle',       iconClass: 'kol-icon--todo',    activeClass: '' },
-  'In Progress': { icon: 'arrow-repeat', iconClass: 'kol-icon--prog',   activeClass: ' kol--active' },
+  'In Progress': { icon: 'arrow-repeat', iconClass: 'kol-icon--prog',   activeClass: '' },
   'Review':      { icon: 'eye',          iconClass: 'kol-icon--review',  activeClass: '' },
   'Done':        { icon: 'check2-all',   iconClass: 'kol-icon--done',    activeClass: ' kol--done' }
 };
@@ -64,34 +89,22 @@ const LABEL_MAP = { 'Critical': ['Design','Branding','Goal'], 'High': ['Design',
 function getLabels(p) { return LABEL_MAP[p] || ['Design']; }
 function getLabelClass(l) { return 'lbl lbl--' + l.toLowerCase().replace(/\s+/g, ''); }
 
-function render() {
-  const filteredTasks = filterTasks(tasks, currentFilters);
-  const columnTasks = {};
-  Object.keys(COLUMN_META).forEach(c => columnTasks[c] = []);
-  filteredTasks.forEach(task => {
-    if (columnTasks[task.column]) columnTasks[task.column].push(task);
-    else columnTasks['To Do'].push(task);
-  });
+const MEMBER_COLORS = {
+  'Ankit Bhalke':   '2563EB',
+  'Khushi Shah':    '8B5CF6',
+  'Rehan Azim':     '059669',
+  'Sumit Tiwari':   'F59E0B',
+  'Aditya Vawahal': 'EF4444',
+};
 
-  let html = '';
-  Object.entries(COLUMN_META).forEach(([name, meta]) => {
-    const colTasks = columnTasks[name];
-    const cardsHtml = colTasks.map(task => {
-      const priClass = getPriorityClass(task.priority);
-      const priIcon = getPriorityIcon(task.priority);
-      const due = getDueInfo(task.dueDate);
-      const labels = getLabels(task.priority);
-      const an = task.assignee || 'Unassigned';
-      // Map each team member to their brand colour
-      const MEMBER_COLORS = {
-        'Ankit Bhalke':   '2563EB',
-        'Khushi Shah':    '8B5CF6',
-        'Rehan Azim':     '059669',
-        'Sumit Tiwari':   'F59E0B',
-        'Aditya Vawahal': 'EF4444',
-      };
-      const ac = MEMBER_COLORS[an] || '64748B';
-      return `<article class="card-task${task.column === 'Done' ? ' card-task--done' : ''}" role="listitem" data-id="${task.id}">
+function buildCard(task) {
+  const priClass = getPriorityClass(task.priority);
+  const priIcon  = getPriorityIcon(task.priority);
+  const due      = getDueInfo(task.dueDate);
+  const labels   = getLabels(task.priority);
+  const an       = task.assignee || 'Unassigned';
+  const ac       = MEMBER_COLORS[an] || '64748B';
+  return `<article class="card-task${task.column === 'Done' ? ' card-task--done' : ''}${due.urgency ? ' ' + due.urgency : ''}" role="listitem" data-id="${task.id}">
   <div class="ct-top">
     <span class="pri pri--${priClass}"><i class="bi bi-${priIcon}"></i>${task.priority}</span>
     ${task.column === 'Done' ? '<span class="ct-done-dot" aria-label="Completed"></span>' : '<button class="ct-menu" aria-label="Card options"><i class="bi bi-three-dots"></i></button>'}
@@ -105,7 +118,7 @@ function render() {
     <span class="ct-chk-txt">${task.column === 'Done' ? 'Done' : '0 / 0'}</span>
   </div>
   <div class="ct-foot">
-    <span class="due ${due.cls}"><i class="bi bi-${due.icon}"></i>${due.text}</span>
+    <span class="due ${due.cls}"><i class="bi bi-${due.icon}"></i>${due.text}${due.urgency ? `<span class="due-dot ${due.urgency}-dot" aria-hidden="true"></span>` : ''}</span>
     <div class="ct-meta">
       <span class="ct-stat"><i class="bi bi-chat"></i>${Math.floor(Math.random() * 10)}</span>
       <span class="ct-stat"><i class="bi bi-paperclip"></i>${Math.floor(Math.random() * 5)}</span>
@@ -115,7 +128,27 @@ function render() {
     </div>
   </div>
 </article>`;
-    }).join('');
+}
+
+function render() {
+  if (currentView === 'list') return renderList();
+  renderKanban();
+}
+
+/* ── KANBAN VIEW ───────────────────────────────────────────── */
+function renderKanban() {
+  const filteredTasks = sortTasks(filterTasks(tasks, currentFilters));
+  const columnTasks = {};
+  Object.keys(COLUMN_META).forEach(c => columnTasks[c] = []);
+  filteredTasks.forEach(task => {
+    if (columnTasks[task.column]) columnTasks[task.column].push(task);
+    else columnTasks['To Do'].push(task);
+  });
+
+  let html = '';
+  Object.entries(COLUMN_META).forEach(([name, meta]) => {
+    const colTasks = columnTasks[name];
+    const cardsHtml = colTasks.map(task => buildCard(task)).join('');
     html += `<div class="kol${meta.activeClass}" aria-label="${name} column">
   <div class="kol-head">
     <div class="kol-head-l">
@@ -133,10 +166,73 @@ function render() {
   });
   html += '<div class="kol-add-col" role="button" tabindex="0" aria-label="Add new column"><i class="bi bi-plus-circle"></i><span>Add Column</span></div>';
   app.innerHTML = html;
+  app.className = 'brd-scroll-area';
   updateStats();
   attachCardListeners();
 }
 
+/* ── LIST VIEW ─────────────────────────────────────────────── */
+function renderList() {
+  const filteredTasks = sortTasks(filterTasks(tasks, currentFilters));
+
+  const rows = filteredTasks.map(task => {
+    const priClass = getPriorityClass(task.priority);
+    const priIcon  = getPriorityIcon(task.priority);
+    const due      = getDueInfo(task.dueDate);
+    const an       = task.assignee || 'Unassigned';
+    const ac       = MEMBER_COLORS[an] || '64748B';
+    const colMeta  = COLUMN_META[task.column] || COLUMN_META['To Do'];
+    return `<tr class="lv-row${due.urgency ? ' ' + due.urgency : ''}" data-id="${task.id}">
+  <td class="lv-td lv-title">
+    <span class="lv-urgency-bar ${due.urgency}"></span>
+    <span class="lv-task-title${task.column === 'Done' ? ' ct-title--done' : ''}">${task.title}</span>
+    <span class="lv-task-desc">${task.description || ''}</span>
+  </td>
+  <td class="lv-td"><span class="pri pri--${priClass}"><i class="bi bi-${priIcon}"></i>${task.priority}</span></td>
+  <td class="lv-td">
+    <span class="lv-status">
+      <span class="kol-icon kol-icon--xs ${colMeta.iconClass}"><i class="bi bi-${colMeta.icon}"></i></span>
+      ${task.column}
+    </span>
+  </td>
+  <td class="lv-td">
+    <span class="due ${due.cls}"><i class="bi bi-${due.icon}"></i>${due.text}${due.urgency ? `<span class="due-dot ${due.urgency}-dot" aria-hidden="true"></span>` : ''}</span>
+  </td>
+  <td class="lv-td">
+    <div class="lv-assignee">
+      <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(an)}&background=${ac}&color=fff&size=22" alt="${an}" class="ct-av" title="${an}" />
+      <span>${an}</span>
+    </div>
+  </td>
+  <td class="lv-td lv-actions">
+    <button class="edit-task-btn lv-btn" data-id="${task.id}" aria-label="Edit task"><i class="bi bi-pencil"></i></button>
+    <button class="delete-task-btn lv-btn" data-id="${task.id}" aria-label="Delete task"><i class="bi bi-trash"></i></button>
+  </td>
+</tr>`;
+  }).join('');
+
+  app.className = 'lv-wrap';
+  app.innerHTML = `
+<table class="lv-table" role="grid" aria-label="Task list">
+  <thead>
+    <tr class="lv-head">
+      <th class="lv-th">Task</th>
+      <th class="lv-th">Priority</th>
+      <th class="lv-th">Status</th>
+      <th class="lv-th">Due Date</th>
+      <th class="lv-th">Assignee</th>
+      <th class="lv-th"></th>
+    </tr>
+  </thead>
+  <tbody>
+    ${rows || '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--c-muted);">No tasks found</td></tr>'}
+  </tbody>
+</table>`;
+  updateStats();
+  attachCardListeners();
+}
+
+/* ── TIMELINE VIEW ─────────────────────────────────────────── */
 function updateStats() {
   const $ = id => document.getElementById(id);
   const s = (id, v) => { const e = $(id); if (e) e.textContent = v; };
@@ -328,7 +424,105 @@ function init() {
     });
   }
 
-  const activityBtn = document.getElementById('activityToggleBtn');
+  // ── Sort panel ───────────────────────────────────────────────
+  const sortToggleBtn = document.getElementById('sortToggleBtn');
+  const sortPanel     = document.getElementById('sortPanel');
+  const sortCloseBtn  = document.getElementById('sortCloseBtn');
+  const sortApplyBtn  = document.getElementById('sortApplyBtn');
+  const sortResetBtn  = document.getElementById('sortResetBtn');
+
+  if (sortToggleBtn) sortToggleBtn.addEventListener('click', () => {
+    sortPanel.style.display = sortPanel.style.display === 'block' ? 'none' : 'block';
+    sortToggleBtn.classList.toggle('hd-btn-pill--active', sortPanel.style.display === 'block');
+  });
+  if (sortCloseBtn)  sortCloseBtn.addEventListener('click',  () => { sortPanel.style.display = 'none'; });
+  if (sortApplyBtn)  sortApplyBtn.addEventListener('click',  () => {
+    const checked = document.querySelector('input[name="sortBy"]:checked');
+    currentSort = checked ? checked.value : 'none';
+    sortPanel.style.display = 'none';
+    render();
+  });
+  if (sortResetBtn)  sortResetBtn.addEventListener('click',  () => {
+    currentSort = 'none';
+    document.querySelector('input[name="sortBy"][value="none"]').checked = true;
+    sortPanel.style.display = 'none';
+    render();
+  });
+  if (sortPanel) sortPanel.addEventListener('click', e => { if (e.target === e.currentTarget) sortPanel.style.display = 'none'; });
+
+  // ── Notifications panel ──────────────────────────────────────
+  const notifBtn      = document.getElementById('notifBtn');
+  const notifPanel    = document.getElementById('notifPanel');
+  const notifCloseBtn = document.getElementById('notifCloseBtn');
+  const notifBadge    = document.getElementById('notifBadge');
+  const markAllBtn    = document.getElementById('markAllReadBtn');
+
+  if (notifBtn) notifBtn.addEventListener('click', () => {
+    const open = notifPanel.style.display === 'block';
+    notifPanel.style.display = open ? 'none' : 'block';
+    notifBtn.classList.toggle('hd-btn-icon--active', !open);
+    if (!open && notifBadge) {
+      // Clear badge when panel opens
+      notifBadge.style.display = 'none';
+    }
+  });
+  if (notifCloseBtn) notifCloseBtn.addEventListener('click', () => {
+    notifPanel.style.display = 'none';
+    notifBtn.classList.remove('hd-btn-icon--active');
+  });
+  if (markAllBtn) markAllBtn.addEventListener('click', () => {
+    document.querySelectorAll('.notif-item--unread').forEach(el => el.classList.remove('notif-item--unread'));
+    document.querySelectorAll('.notif-dot').forEach(el => el.remove());
+    if (notifBadge) notifBadge.style.display = 'none';
+  });
+  if (notifPanel) notifPanel.addEventListener('click', e => { if (e.target === e.currentTarget) { notifPanel.style.display = 'none'; notifBtn.classList.remove('hd-btn-icon--active'); }});
+
+  // ── Settings panel ───────────────────────────────────────────
+  const settingsBtn      = document.getElementById('settingsBtn');
+  const settingsPanel    = document.getElementById('settingsPanel');
+  const settingsCloseBtn = document.getElementById('settingsCloseBtn');
+  const clearAccountsBtn = document.getElementById('clearAccountsBtn');
+  const settingCompact   = document.getElementById('settingCompact');
+  const settingAvatars   = document.getElementById('settingAvatars');
+
+  if (settingsBtn) settingsBtn.addEventListener('click', () => {
+    const open = settingsPanel.style.display === 'block';
+    settingsPanel.style.display = open ? 'none' : 'block';
+    settingsBtn.classList.toggle('hd-btn-icon--active', !open);
+  });
+  if (settingsCloseBtn) settingsCloseBtn.addEventListener('click', () => {
+    settingsPanel.style.display = 'none';
+    settingsBtn.classList.remove('hd-btn-icon--active');
+  });
+  if (clearAccountsBtn) clearAccountsBtn.addEventListener('click', () => {
+    if (confirm('Clear all saved accounts? You will be logged out.')) {
+      localStorage.removeItem('pf_users');
+      localStorage.removeItem('pf_session');
+      window.location.href = 'welcome.html';
+    }
+  });
+  if (settingCompact) settingCompact.addEventListener('change', () => {
+    document.body.classList.toggle('setting--compact', settingCompact.checked);
+  });
+  if (settingAvatars) settingAvatars.addEventListener('change', () => {
+    document.body.classList.toggle('setting--no-avatars', !settingAvatars.checked);
+  });
+  if (settingsPanel) settingsPanel.addEventListener('click', e => { if (e.target === e.currentTarget) { settingsPanel.style.display = 'none'; settingsBtn.classList.remove('hd-btn-icon--active'); }});
+
+  // ── View toggle ──────────────────────────────────────────────
+  const viewBtns = document.querySelectorAll('.brd-view-btn');
+  const viewMap  = ['kanban', 'list'];
+  viewBtns.forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      currentView = viewMap[i] || 'kanban';
+      viewBtns.forEach((b, j) => {
+        b.classList.toggle('brd-view-btn--on', j === i);
+        b.setAttribute('aria-pressed', String(j === i));
+      });
+      render();
+    });
+  });
+  const activityBtn     = document.getElementById('activityToggleBtn');
   const activitySidebar = document.getElementById('activitySidebar');
   if (activityBtn && activitySidebar) {
     activityBtn.addEventListener('click', () => {
