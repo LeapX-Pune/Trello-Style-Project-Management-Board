@@ -1307,9 +1307,9 @@ img    { display: block; }
 ============================================================ */
 .sort-bg {
   position: fixed;
-  top: var(--h-header);
+  top: calc(var(--h-header) + 8px);
   right: 12px;
-  z-index: 1500;
+  z-index: 1400; /* below notif/settings so they stack correctly */
   animation: panelIn .18s ease;
 }
 .sort-box {
@@ -1346,9 +1346,9 @@ img    { display: block; }
 ============================================================ */
 .notif-bg {
   position: fixed;
-  top: var(--h-header);
+  top: calc(var(--h-header) + 8px);
   right: 12px;
-  z-index: 1500;
+  z-index: 1600; /* highest — always on top when open */
   animation: panelIn .18s ease;
 }
 .notif-box {
@@ -1439,7 +1439,7 @@ img    { display: block; }
 ============================================================ */
 .settings-bg {
   position: fixed;
-  top: var(--h-header);
+  top: calc(var(--h-header) + 8px);
   right: 12px;
   z-index: 1500;
   animation: panelIn .18s ease;

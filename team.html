@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProjectFlow — Team</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/team.css" />
+</head>
+<body>
+
+<!-- HEADER (same as dashboard) -->
+<header class="app-header" role="banner">
+  <div class="header-inner">
+    <button class="hd-menu-toggle" id="mobileMenuBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+      <i class="bi bi-list"></i>
+    </button>
+    <div class="hd-brand">
+      <div class="brand-logo"><i class="bi bi-layers-fill"></i></div>
+      <div class="brand-text">
+        <span class="brand-name">ProjectFlow</span>
+        <span class="brand-ws">PW LeapX</span>
+      </div>
+    </div>
+    <div class="hd-sep"></div>
+    <div class="hd-project">
+      <i class="bi bi-kanban hd-project-icon"></i>
+      <span class="hd-project-name">Marketing Rebrand 2026</span>
+      <i class="bi bi-chevron-down hd-project-caret"></i>
+    </div>
+    <div class="hd-spacer"></div>
+    <div class="hd-search">
+      <i class="bi bi-search hd-search-icon"></i>
+      <input class="hd-search-input" type="text" placeholder="Search tasks, members, labels&hellip;" aria-label="Search" />
+      <kbd class="hd-search-kbd">&#8984;K</kbd>
+    </div>
+    <div class="hd-controls">
+      <div class="hd-sep"></div>
+      <button class="hd-btn-icon pos-rel" id="notifBtn" aria-label="Notifications">
+        <i class="bi bi-bell"></i><span class="hd-notif" id="notifBadge">3</span>
+      </button>
+      <button class="hd-btn-icon" id="settingsBtn" aria-label="Settings"><i class="bi bi-gear"></i></button>
+      <div class="hd-avatar-wrap" role="button" tabindex="0" aria-label="User menu">
+        <img src="https://ui-avatars.com/api/?name=Ankit+Bhalke&background=2563EB&color=fff&size=32" alt="Ankit Bhalke" class="hd-avatar" id="headerAvatar" />
+        <span class="hd-uname" id="headerUsername">Ankit Bhalke</span>
+        <i class="bi bi-chevron-down hd-ucaret"></i>
+      </div>
+      <div class="hd-sep"></div>
+      <a href="dashboard.html" class="hd-btn-primary" style="text-decoration:none;">
+        <i class="bi bi-kanban"></i><span>Board</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- APP SHELL -->
+<div class="app-shell">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar-left" aria-label="Main navigation">
+    <nav class="sb-nav">
+      <a href="dashboard.html" class="sb-link" aria-label="Dashboard"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
+      <a href="dashboard.html" class="sb-link" aria-label="Boards"><i class="bi bi-kanban"></i><span>Boards</span><span class="sb-badge">4</span></a>
+      <a href="#" class="sb-link" aria-label="Calendar"><i class="bi bi-calendar3"></i><span>Calendar</span></a>
+      <a href="team.html" class="sb-link sb-link--active" aria-current="page" aria-label="Team"><i class="bi bi-people"></i><span>Team</span></a>
+      <a href="#" class="sb-link" aria-label="Settings"><i class="bi bi-sliders"></i><span>Settings</span></a>
+    </nav>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-section-head"><span>Team Members</span><span class="sb-section-count">5</span></div>
+      <div class="sb-member">
+        <div class="sb-mem-av-wrap">
+          <img src="https://ui-avatars.com/api/?name=Ankit+Bhalke&background=2563EB&color=fff&size=28" alt="Ankit Bhalke" class="sb-mem-av" />
+          <span class="sb-dot sb-dot--on"></span>
+        </div>
+        <div class="sb-mem-info"><span class="sb-mem-name">Ankit Bhalke</span><span class="sb-mem-role">Frontend Developer</span></div>
+      </div>
+      <div class="sb-member">
+        <div class="sb-mem-av-wrap">
+          <img src="https://ui-avatars.com/api/?name=Khushi+Shah&background=8B5CF6&color=fff&size=28" alt="Khushi Shah" class="sb-mem-av" />
+          <span class="sb-dot sb-dot--on"></span>
+        </div>
+        <div class="sb-mem-info"><span class="sb-mem-name">Khushi Shah</span><span class="sb-mem-role">UI/UX Designer</span></div>
+      </div>
+      <div class="sb-member">
+        <div class="sb-mem-av-wrap">
+          <img src="https://ui-avatars.com/api/?name=Rehan+Azim&background=059669&color=fff&size=28" alt="Rehan Azim" class="sb-mem-av" />
+          <span class="sb-dot sb-dot--on"></span>
+        </div>
+        <div class="sb-mem-info"><span class="sb-mem-name">Rehan Azim</span><span class="sb-mem-role">Frontend Developer</span></div>
+      </div>
+      <div class="sb-member">
+        <div class="sb-mem-av-wrap">
+          <img src="https://ui-avatars.com/api/?name=Sumit+Tiwari&background=F59E0B&color=fff&size=28" alt="Sumit Tiwari" class="sb-mem-av" />
+          <span class="sb-dot sb-dot--away"></span>
+        </div>
+        <div class="sb-mem-info"><span class="sb-mem-name">Sumit Tiwari</span><span class="sb-mem-role">Frontend Developer</span></div>
+      </div>
+      <div class="sb-member">
+        <div class="sb-mem-av-wrap">
+          <img src="https://ui-avatars.com/api/?name=Aditya+Vawahal&background=EF4444&color=fff&size=28" alt="Aditya Vawahal" class="sb-mem-av" />
+          <span class="sb-dot sb-dot--off"></span>
+        </div>
+        <div class="sb-mem-info"><span class="sb-mem-name">Aditya Vawahal</span><span class="sb-mem-role">Frontend Developer</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="board-main" role="main" aria-label="Team Page">
+
+    <!-- Page topbar -->
+    <div class="brd-topbar">
+      <div class="brd-topbar-left">
+        <div>
+          <h1 class="brd-title">Team</h1>
+          <p class="brd-sub">Marketing Rebrand 2026 &nbsp;&middot;&nbsp; 5 members</p>
+        </div>
+        <span class="brd-sprint-tag">Active Sprint</span>
+      </div>
+      <div class="brd-topbar-right">
+        <div class="team-legend">
+          <span class="team-legend-item"><span class="sb-dot sb-dot--on" style="position:static;border:none;display:inline-block;"></span> Online</span>
+          <span class="team-legend-item"><span class="sb-dot sb-dot--away" style="position:static;border:none;display:inline-block;"></span> Away</span>
+          <span class="team-legend-item"><span class="sb-dot sb-dot--off" style="position:static;border:none;display:inline-block;"></span> Offline</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Cards Grid -->
+    <div class="team-grid-wrap">
+      <div class="team-grid">
+
+        <!-- Ankit Bhalke -->
+        <div class="team-card">
+          <div class="team-card-cover team-card-cover--blue"></div>
+          <div class="team-card-body">
+            <div class="team-card-av-wrap">
+              <img src="https://ui-avatars.com/api/?name=Ankit+Bhalke&background=2563EB&color=fff&size=80" alt="Ankit Bhalke" class="team-card-av" />
+              <span class="team-card-status sb-dot--on" aria-label="Online"></span>
+            </div>
+            <h2 class="team-card-name">Ankit Bhalke</h2>
+            <p class="team-card-role">Frontend Developer</p>
+            <div class="team-card-tags">
+              <span class="team-tag team-tag--blue"><i class="bi bi-kanban"></i> Boards</span>
+              <span class="team-tag team-tag--blue"><i class="bi bi-code-slash"></i> Frontend</span>
+            </div>
+            <div class="team-card-stats">
+              <div class="team-stat"><span class="team-stat-val">4</span><span class="team-stat-lbl">Tasks</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val">2</span><span class="team-stat-lbl">Done</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val" style="color:#22C55E">Online</span><span class="team-stat-lbl">Status</span></div>
+            </div>
+            <div class="team-card-foot">
+              <span class="team-badge team-badge--green"><i class="bi bi-circle-fill"></i> Online</span>
+              <span class="team-email">ankit@pwleapx.com</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khushi Shah -->
+        <div class="team-card">
+          <div class="team-card-cover team-card-cover--purple"></div>
+          <div class="team-card-body">
+            <div class="team-card-av-wrap">
+              <img src="https://ui-avatars.com/api/?name=Khushi+Shah&background=8B5CF6&color=fff&size=80" alt="Khushi Shah" class="team-card-av" />
+              <span class="team-card-status sb-dot--on" aria-label="Online"></span>
+            </div>
+            <h2 class="team-card-name">Khushi Shah</h2>
+            <p class="team-card-role">UI/UX Designer</p>
+            <div class="team-card-tags">
+              <span class="team-tag team-tag--purple"><i class="bi bi-palette"></i> Design</span>
+              <span class="team-tag team-tag--purple"><i class="bi bi-layout-text-window"></i> Prototyping</span>
+            </div>
+            <div class="team-card-stats">
+              <div class="team-stat"><span class="team-stat-val">3</span><span class="team-stat-lbl">Tasks</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val">1</span><span class="team-stat-lbl">Done</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val" style="color:#22C55E">Online</span><span class="team-stat-lbl">Status</span></div>
+            </div>
+            <div class="team-card-foot">
+              <span class="team-badge team-badge--green"><i class="bi bi-circle-fill"></i> Online</span>
+              <span class="team-email">khushi@pwleapx.com</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rehan Azim -->
+        <div class="team-card">
+          <div class="team-card-cover team-card-cover--green"></div>
+          <div class="team-card-body">
+            <div class="team-card-av-wrap">
+              <img src="https://ui-avatars.com/api/?name=Rehan+Azim&background=059669&color=fff&size=80" alt="Rehan Azim" class="team-card-av" />
+              <span class="team-card-status sb-dot--on" aria-label="Online"></span>
+            </div>
+            <h2 class="team-card-name">Rehan Azim</h2>
+            <p class="team-card-role">Frontend Developer</p>
+            <div class="team-card-tags">
+              <span class="team-tag team-tag--green"><i class="bi bi-code-slash"></i> React</span>
+              <span class="team-tag team-tag--green"><i class="bi bi-phone"></i> Responsive</span>
+            </div>
+            <div class="team-card-stats">
+              <div class="team-stat"><span class="team-stat-val">2</span><span class="team-stat-lbl">Tasks</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val">1</span><span class="team-stat-lbl">Done</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val" style="color:#22C55E">Online</span><span class="team-stat-lbl">Status</span></div>
+            </div>
+            <div class="team-card-foot">
+              <span class="team-badge team-badge--green"><i class="bi bi-circle-fill"></i> Online</span>
+              <span class="team-email">rehan@pwleapx.com</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sumit Tiwari -->
+        <div class="team-card">
+          <div class="team-card-cover team-card-cover--yellow"></div>
+          <div class="team-card-body">
+            <div class="team-card-av-wrap">
+              <img src="https://ui-avatars.com/api/?name=Sumit+Tiwari&background=F59E0B&color=fff&size=80" alt="Sumit Tiwari" class="team-card-av" />
+              <span class="team-card-status sb-dot--away" aria-label="Away"></span>
+            </div>
+            <h2 class="team-card-name">Sumit Tiwari</h2>
+            <p class="team-card-role">Frontend Developer</p>
+            <div class="team-card-tags">
+              <span class="team-tag team-tag--yellow"><i class="bi bi-code-slash"></i> Frontend</span>
+              <span class="team-tag team-tag--yellow"><i class="bi bi-phone"></i> Responsive</span>
+            </div>
+            <div class="team-card-stats">
+              <div class="team-stat"><span class="team-stat-val">2</span><span class="team-stat-lbl">Tasks</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val">0</span><span class="team-stat-lbl">Done</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val" style="color:#F59E0B">Away</span><span class="team-stat-lbl">Status</span></div>
+            </div>
+            <div class="team-card-foot">
+              <span class="team-badge team-badge--yellow"><i class="bi bi-circle-fill"></i> Away</span>
+              <span class="team-email">sumit@pwleapx.com</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aditya Vawahal -->
+        <div class="team-card">
+          <div class="team-card-cover team-card-cover--red"></div>
+          <div class="team-card-body">
+            <div class="team-card-av-wrap">
+              <img src="https://ui-avatars.com/api/?name=Aditya+Vawahal&background=EF4444&color=fff&size=80" alt="Aditya Vawahal" class="team-card-av" />
+              <span class="team-card-status sb-dot--off" aria-label="Offline"></span>
+            </div>
+            <h2 class="team-card-name">Aditya Vawahal</h2>
+            <p class="team-card-role">Frontend Developer</p>
+            <div class="team-card-tags">
+              <span class="team-tag team-tag--red"><i class="bi bi-code-slash"></i> Frontend</span>
+              <span class="team-tag team-tag--red"><i class="bi bi-layout-text-window"></i> UI Dev</span>
+            </div>
+            <div class="team-card-stats">
+              <div class="team-stat"><span class="team-stat-val">1</span><span class="team-stat-lbl">Tasks</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val">1</span><span class="team-stat-lbl">Done</span></div>
+              <div class="team-stat-sep"></div>
+              <div class="team-stat"><span class="team-stat-val" style="color:#94A3B8">Offline</span><span class="team-stat-lbl">Status</span></div>
+            </div>
+            <div class="team-card-foot">
+              <span class="team-badge team-badge--muted"><i class="bi bi-circle-fill"></i> Offline</span>
+              <span class="team-email">aditya@pwleapx.com</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /team-grid -->
+    </div><!-- /team-grid-wrap -->
+
+  </main>
+
+</div><!-- /app-shell -->
+
+<!-- MOBILE DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+
+<script>
+  // Restore session header name
+  (function () {
+    try {
+      var session = JSON.parse(localStorage.getItem('pf_session') || 'null');
+      var name = session && session.name ? session.name : null;
+      if (!name) {
+        var users = JSON.parse(localStorage.getItem('pf_users') || '[]');
+        if (users.length > 0) name = users[users.length - 1].name;
+      }
+      if (name) {
+        var nameEl   = document.getElementById('headerUsername');
+        var avatarEl = document.getElementById('headerAvatar');
+        var encoded  = encodeURIComponent(name);
+        if (nameEl) nameEl.textContent = name;
+        if (avatarEl) { avatarEl.src = 'https://ui-avatars.com/api/?name=' + encoded + '&background=2563EB&color=fff&size=32'; avatarEl.alt = name; }
+        var wrap = avatarEl && avatarEl.closest('.hd-avatar-wrap');
+        if (wrap) wrap.setAttribute('aria-label', name + ' \u2014 user menu');
+      }
+    } catch(e) {}
+  })();
+
+  // Mobile hamburger
+  (function () {
+    var menuBtn  = document.getElementById('mobileMenuBtn');
+    var sidebar  = document.querySelector('.sidebar-left');
+    var overlay  = document.getElementById('drawerOverlay');
+    if (!menuBtn || !sidebar) return;
+    menuBtn.addEventListener('click', function () {
+      var open = sidebar.classList.toggle('is-open');
+      menuBtn.setAttribute('aria-expanded', String(open));
+      if (overlay) overlay.classList.toggle('is-visible', open);
+    });
+    if (overlay) overlay.addEventListener('click', function () {
+      sidebar.classList.remove('is-open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      overlay.classList.remove('is-visible');
+    });
+  })();
+</script>
+
+</body>
+</html>

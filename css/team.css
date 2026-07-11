@@ -1,0 +1,229 @@
+/* ============================================================
+   ProjectFlow — team.css
+   Team page styles — matches existing design system exactly
+   Uses CSS variables from style.css
+============================================================ */
+
+/* ── Page wrapper ───────────────────────────────────────────── */
+.team-grid-wrap {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 20px 28px;
+}
+.team-grid-wrap::-webkit-scrollbar { width: 4px; }
+.team-grid-wrap::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 4px; }
+
+/* ── Responsive grid ────────────────────────────────────────── */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+/* ── Card ───────────────────────────────────────────────────── */
+.team-card {
+  background: var(--c-card);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: box-shadow var(--t), transform var(--t), border-color var(--t);
+  animation: kolIn .4s ease both;
+}
+.team-card:hover {
+  box-shadow: var(--sh-blue);
+  transform: translateY(-4px);
+  border-color: var(--c-blue);
+}
+
+/* ── Coloured cover strip ───────────────────────────────────── */
+.team-card-cover {
+  height: 56px;
+}
+.team-card-cover--blue   { background: linear-gradient(135deg, #2563EB, #60A5FA); }
+.team-card-cover--purple { background: linear-gradient(135deg, #7C3AED, #A78BFA); }
+.team-card-cover--green  { background: linear-gradient(135deg, #059669, #34D399); }
+.team-card-cover--yellow { background: linear-gradient(135deg, #D97706, #FBBF24); }
+.team-card-cover--red    { background: linear-gradient(135deg, #DC2626, #F87171); }
+
+/* ── Card body ──────────────────────────────────────────────── */
+.team-card-body {
+  padding: 0 18px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ── Avatar ─────────────────────────────────────────────────── */
+.team-card-av-wrap {
+  position: relative;
+  margin-top: -32px;
+  margin-bottom: 10px;
+}
+.team-card-av {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid var(--c-bg);
+  box-shadow: var(--sh-sm);
+  object-fit: cover;
+  display: block;
+}
+/* Status dot on the avatar */
+.team-card-status {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--c-bg);
+}
+
+/* ── Name & role ────────────────────────────────────────────── */
+.team-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-txt);
+  letter-spacing: -.2px;
+  margin-bottom: 3px;
+}
+.team-card-role {
+  font-size: 12px;
+  color: var(--c-muted);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+/* ── Skill tags ─────────────────────────────────────────────── */
+.team-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.team-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: var(--r-full);
+}
+.team-tag--blue   { background: #EFF6FF; color: var(--c-blue); }
+.team-tag--purple { background: #FAF5FF; color: #7C3AED; }
+.team-tag--green  { background: #ECFDF5; color: #059669; }
+.team-tag--yellow { background: #FFFBEB; color: #B45309; }
+.team-tag--red    { background: #FFF1F2; color: #BE123C; }
+
+/* ── Stats row ──────────────────────────────────────────────── */
+.team-card-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  width: 100%;
+}
+.team-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.3;
+}
+.team-stat-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-txt);
+}
+.team-stat-lbl {
+  font-size: 10px;
+  color: var(--c-muted);
+  font-weight: 500;
+}
+.team-stat-sep {
+  width: 1px;
+  height: 24px;
+  background: var(--c-border);
+}
+
+/* ── Card footer ────────────────────────────────────────────── */
+.team-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+.team-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--r-full);
+  white-space: nowrap;
+}
+.team-badge .bi-circle-fill { font-size: 6px; }
+.team-badge--green  { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+.team-badge--yellow { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
+.team-badge--muted  { background: var(--c-surface); color: var(--c-muted); border: 1px solid var(--c-border); }
+
+.team-email {
+  font-size: 10.5px;
+  color: var(--c-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+/* ── Legend in topbar ───────────────────────────────────────── */
+.team-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.team-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--c-txt2);
+  font-weight: 500;
+}
+.team-legend-item .sb-dot {
+  width: 9px;
+  height: 9px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .team-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+  .team-grid-wrap { padding: 8px 14px 24px; }
+}
+
+@media (max-width: 767px) {
+  .team-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .team-grid-wrap { padding: 8px 12px 24px; }
+  .team-card-av { width: 52px; height: 52px; }
+  .team-card-name { font-size: 13px; }
+  .team-card-role { font-size: 11px; }
+  .team-card-body { padding: 0 12px 14px; }
+  .team-email { display: none; } /* too narrow on small phones */
+  .team-legend { display: none; } /* hide legend on mobile, shown in sidebar */
+  .team-card-cover { height: 44px; }
+  .team-card-av-wrap { margin-top: -26px; }
+}
+
+@media (max-width: 400px) {
+  .team-grid { grid-template-columns: 1fr; }
+}

@@ -431,9 +431,12 @@ function init() {
   const sortApplyBtn  = document.getElementById('sortApplyBtn');
   const sortResetBtn  = document.getElementById('sortResetBtn');
 
-  if (sortToggleBtn) sortToggleBtn.addEventListener('click', () => {
-    sortPanel.style.display = sortPanel.style.display === 'block' ? 'none' : 'block';
-    sortToggleBtn.classList.toggle('hd-btn-pill--active', sortPanel.style.display === 'block');
+  if (sortToggleBtn) sortToggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = sortPanel.style.display === 'block';
+    closeAllPanels('sort');
+    sortPanel.style.display = open ? 'none' : 'block';
+    sortToggleBtn.classList.toggle('hd-btn-pill--active', !open);
   });
   if (sortCloseBtn)  sortCloseBtn.addEventListener('click',  () => { sortPanel.style.display = 'none'; });
   if (sortApplyBtn)  sortApplyBtn.addEventListener('click',  () => {
@@ -457,14 +460,20 @@ function init() {
   const notifBadge    = document.getElementById('notifBadge');
   const markAllBtn    = document.getElementById('markAllReadBtn');
 
-  if (notifBtn) notifBtn.addEventListener('click', () => {
+  /** Close all header dropdown panels at once. */
+  function closeAllPanels(except) {
+    if (except !== 'notif'    && notifPanel)    { notifPanel.style.display    = 'none'; if (notifBtn)     notifBtn.classList.remove('hd-btn-icon--active'); }
+    if (except !== 'settings' && settingsPanel) { settingsPanel.style.display = 'none'; if (settingsBtn)  settingsBtn.classList.remove('hd-btn-icon--active'); }
+    if (except !== 'sort'     && sortPanel)     { sortPanel.style.display     = 'none'; if (sortToggleBtn) sortToggleBtn.classList.remove('hd-btn-pill--active'); }
+  }
+
+  if (notifBtn) notifBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     const open = notifPanel.style.display === 'block';
+    closeAllPanels('notif');
     notifPanel.style.display = open ? 'none' : 'block';
     notifBtn.classList.toggle('hd-btn-icon--active', !open);
-    if (!open && notifBadge) {
-      // Clear badge when panel opens
-      notifBadge.style.display = 'none';
-    }
+    if (!open && notifBadge) notifBadge.style.display = 'none';
   });
   if (notifCloseBtn) notifCloseBtn.addEventListener('click', () => {
     notifPanel.style.display = 'none';
@@ -475,7 +484,6 @@ function init() {
     document.querySelectorAll('.notif-dot').forEach(el => el.remove());
     if (notifBadge) notifBadge.style.display = 'none';
   });
-  if (notifPanel) notifPanel.addEventListener('click', e => { if (e.target === e.currentTarget) { notifPanel.style.display = 'none'; notifBtn.classList.remove('hd-btn-icon--active'); }});
 
   // ── Settings panel ───────────────────────────────────────────
   const settingsBtn      = document.getElementById('settingsBtn');
@@ -485,8 +493,10 @@ function init() {
   const settingCompact   = document.getElementById('settingCompact');
   const settingAvatars   = document.getElementById('settingAvatars');
 
-  if (settingsBtn) settingsBtn.addEventListener('click', () => {
+  if (settingsBtn) settingsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     const open = settingsPanel.style.display === 'block';
+    closeAllPanels('settings');
     settingsPanel.style.display = open ? 'none' : 'block';
     settingsBtn.classList.toggle('hd-btn-icon--active', !open);
   });
@@ -507,7 +517,16 @@ function init() {
   if (settingAvatars) settingAvatars.addEventListener('change', () => {
     document.body.classList.toggle('setting--no-avatars', !settingAvatars.checked);
   });
-  if (settingsPanel) settingsPanel.addEventListener('click', e => { if (e.target === e.currentTarget) { settingsPanel.style.display = 'none'; settingsBtn.classList.remove('hd-btn-icon--active'); }});
+
+  // ── Close all panels when clicking outside ───────────────────
+  document.addEventListener('click', (e) => {
+    const inNotif    = notifPanel    && (notifPanel.contains(e.target)    || (notifBtn    && notifBtn.contains(e.target)));
+    const inSettings = settingsPanel && (settingsPanel.contains(e.target) || (settingsBtn && settingsBtn.contains(e.target)));
+    const inSort     = sortPanel     && (sortPanel.contains(e.target)     || (sortToggleBtn && sortToggleBtn.contains(e.target)));
+    if (!inNotif)    { if (notifPanel)    { notifPanel.style.display    = 'none'; if (notifBtn)     notifBtn.classList.remove('hd-btn-icon--active'); }}
+    if (!inSettings) { if (settingsPanel) { settingsPanel.style.display = 'none'; if (settingsBtn)  settingsBtn.classList.remove('hd-btn-icon--active'); }}
+    if (!inSort)     { if (sortPanel)     { sortPanel.style.display     = 'none'; if (sortToggleBtn) sortToggleBtn.classList.remove('hd-btn-pill--active'); }}
+  });
 
   // ── View toggle ──────────────────────────────────────────────
   const viewBtns = document.querySelectorAll('.brd-view-btn');
