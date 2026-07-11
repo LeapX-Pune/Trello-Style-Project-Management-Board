@@ -669,118 +669,135 @@ ul     { list-style: none; }
     min-height: 100vh;
   }
 
-  /* ── Blue panel — TOP, compact hero strip ── */
+  /* ── BLUE PANEL — TOP ───────────────────────────────────── */
   .wl-left {
     order: 1;
     flex: none;
-    padding: 28px 20px 24px;
-    min-height: unset;
+    padding: 24px 20px 20px;
   }
 
-  /* Tighten brand area */
-  .wl-brand        { margin-bottom: 20px; }
+  .wl-brand        { margin-bottom: 16px; }
+  .wl-brand-logo   { width: 34px; height: 34px; font-size: 16px; }
   .wl-brand-name   { font-size: 15px; }
   .wl-brand-tag    { font-size: 10px; }
 
-  /* Hero copy — smaller */
-  .wl-hero         { margin-bottom: 16px; }
-  .wl-hero-title   { font-size: 22px; letter-spacing: -.4px; }
-  .wl-hero-title br { display: none; } /* keep on one line */
-  .wl-hero-sub     { font-size: 13px; max-width: 100%; }
+  .wl-hero         { margin-bottom: 14px; }
+  .wl-hero-title   { font-size: 22px; letter-spacing: -.4px; line-height: 1.2; }
+  .wl-hero-title br { display: none; }
+  .wl-hero-sub     { font-size: 13px; line-height: 1.55; max-width: 100%; color: rgba(255,255,255,.8); }
 
-  /* Feature pills — compact 2-column grid */
+  /* Feature pills — 3-column row */
   .wl-features {
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
     margin-bottom: 0;
   }
   .wl-feat {
-    flex: 1 1 calc(50% - 4px);
-    min-width: 130px;
+    flex: 1;
+    min-width: 0;
     background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.15);
-    padding: 8px 10px;
+    border: 1px solid rgba(255,255,255,.18);
+    padding: 8px 8px;
     border-radius: var(--r-sm);
-    gap: 8px;
+    gap: 6px;
+    align-items: flex-start;
   }
-  .wl-feat-icon  { width: 28px; height: 28px; font-size: 13px; }
-  .wl-feat-title { font-size: 12px; }
-  .wl-feat-desc  { font-size: 11px; }
+  .wl-feat-icon  { width: 26px; height: 26px; font-size: 12px; flex-shrink: 0; }
+  .wl-feat-title { font-size: 11px; }
+  .wl-feat-desc  { display: none; } /* hidden to save space */
 
-  /* Hide illustration and quote — not needed on mobile hero strip */
+  /* Hide illustration and quote */
   .wl-illustration { display: none; }
   .wl-quote        { display: none; }
 
-  /* ── White sign-in panel — BOTTOM, fills remaining height ── */
+  /* ── WHITE SIGN-IN PANEL — BOTTOM ──────────────────────── */
   .wl-right {
     order: 2;
     flex: 1;
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 32px 20px 40px;
+    padding: 28px 20px 40px;
     background: var(--c-bg);
     overflow-y: auto;
+    /* Safe area for notched phones */
+    padding-bottom: max(40px, env(safe-area-inset-bottom));
   }
 
-  /* Card fills full width, no extra shadow needed */
+  /* Card — full width with comfortable side padding */
   .wl-card {
     width: 100%;
-    max-width: 100%;
+    max-width: 480px;
+    background: var(--c-bg);
     border: none;
     box-shadow: none;
     border-radius: 0;
-    padding: 24px 4px 16px;
-    background: var(--c-bg);
+    padding: 20px 0 0;
   }
 
+  /* Card header */
   .wl-card-head  { margin-bottom: 20px; }
-  .wl-card-logo  { width: 44px; height: 44px; font-size: 20px; margin-bottom: 12px; }
+  .wl-card-logo  { width: 44px; height: 44px; font-size: 20px; margin-bottom: 10px; }
   .wl-card-title { font-size: 20px; }
   .wl-card-sub   { font-size: 13px; }
 
-  /* Touch-friendly inputs & buttons */
-  .wl-input { height: 46px; font-size: 14px; }
-  .wl-btn   { height: 48px; font-size: 14px; }
+  /* Inputs — touch friendly */
+  .wl-input      { height: 48px; font-size: 15px; border-radius: var(--r-sm); }
+  .wl-input-icon { font-size: 15px; }
+  .wl-label      { font-size: 13px; margin-bottom: 6px; }
+  .wl-field      { margin-bottom: 14px; }
 
-  .wl-row-util    { margin-bottom: 18px; }
+  /* Button */
+  .wl-btn        { height: 50px; font-size: 15px; border-radius: var(--r-sm); }
+
+  /* Remember / forgot */
+  .wl-row-util    { margin-bottom: 20px; }
   .wl-check-label { font-size: 13px; }
   .wl-forgot      { font-size: 13px; }
 
-  .wl-signup { margin-top: 16px; font-size: 13px; }
+  /* Sign up link */
+  .wl-signup      { margin-top: 18px; font-size: 13.5px; }
 }
 
 /* ============================================================
-   RESPONSIVE — Small Mobile (375px)
+   RESPONSIVE — Small Mobile (≤ 480px)
+   Extra tightening — still comfortable on 375px phones
 ============================================================ */
-@media (max-width: 639px) {
-  .wl-left  { padding: 24px 16px 20px; }
-  .wl-right { padding: 28px 16px 36px; }
+@media (max-width: 480px) {
+  .wl-left  { padding: 20px 16px 18px; }
+  .wl-right { padding: 24px 16px 36px; padding-bottom: max(36px, env(safe-area-inset-bottom)); }
 
-  .wl-hero-title { font-size: 21px; }
-  .wl-feat { flex: 1 1 calc(50% - 4px); }
+  .wl-hero-title { font-size: 20px; }
+  .wl-hero-sub   { font-size: 12.5px; }
+
+  /* Stack features to 2-column wrap when 3 is too tight */
+  .wl-features   { flex-wrap: wrap; }
+  .wl-feat       { flex: 1 1 calc(50% - 4px); min-width: 120px; }
+
+  .wl-input  { height: 46px; font-size: 14px; }
+  .wl-btn    { height: 48px; font-size: 14px; }
 }
 
 /* ============================================================
-   RESPONSIVE — Very Small (< 375px)
+   RESPONSIVE — Very Small (< 360px)
 ============================================================ */
-@media (max-width: 374px) {
-  .wl-left  { padding: 20px 14px 18px; }
-  .wl-right { padding: 24px 14px 32px; }
+@media (max-width: 359px) {
+  .wl-left  { padding: 16px 14px 14px; }
+  .wl-right { padding: 20px 14px 32px; }
 
-  .wl-hero-title  { font-size: 19px; }
+  .wl-hero-title  { font-size: 18px; }
   .wl-card-title  { font-size: 18px; }
 
-  /* Stack features to single column on very small */
+  /* Single column feature list */
   .wl-feat { flex: 1 1 100%; min-width: 100%; }
-
-  .wl-input { height: 44px; }
-  .wl-btn   { height: 46px; }
 
   .wl-row-util {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
+
+  .wl-input { height: 44px; }
+  .wl-btn   { height: 46px; }
 }

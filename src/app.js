@@ -1,14 +1,14 @@
 let tasks = [
-  { id: 1, title: 'Write PRD document', description: 'Draft the initial project requirement details', assignee: 'Alex Johnson', dueDate: '2026-07-10', priority: 'High', column: 'In Progress' },
-  { id: 2, title: 'Design Landing Page UI', description: 'Create basic layouts for home page', assignee: 'Sara Lee', dueDate: '2026-07-15', priority: 'Medium', column: 'To Do' },
-  { id: 3, title: 'Implement Authentication', description: 'Setup login/signup flows', assignee: 'Marcus Chen', dueDate: '2026-07-20', priority: 'High', column: 'To Do' },
-  { id: 4, title: 'New color palette & brand identity', description: 'Define the new brand color palette and identity guidelines', assignee: 'Sara Lee', dueDate: '2026-07-09', priority: 'Critical', column: 'In Progress' },
-  { id: 5, title: 'Social media asset kit', description: 'Create assets for social media campaign', assignee: 'Priya Kapoor', dueDate: '2026-07-22', priority: 'Low', column: 'Backlog' },
-  { id: 6, title: 'Email templates', description: 'Design responsive email templates', assignee: 'Marcus Chen', dueDate: '2026-07-18', priority: 'Medium', column: 'Review' },
-  { id: 7, title: 'Sprint 3 retrospective', description: 'Document retrospective findings', assignee: 'Tom Rivera', dueDate: '2026-07-08', priority: 'Medium', column: 'Done' },
-  { id: 8, title: 'Brand identity guidelines', description: 'Compile brand guidelines document', assignee: 'Sara Lee', dueDate: '2026-07-16', priority: 'High', column: 'Review' },
-  { id: 9, title: 'Logo variations', description: 'Create logo variations for different use cases', assignee: 'Sara Lee', dueDate: '2026-07-09', priority: 'Critical', column: 'Done' },
-  { id: 10, title: 'Design tokens', description: 'Define design token system', assignee: 'Priya Kapoor', dueDate: '2026-07-25', priority: 'Medium', column: 'Backlog' }
+  { id: 1,  title: 'Write PRD document',              description: 'Draft the initial project requirement details',           assignee: 'Ankit Bhalke',   dueDate: '2026-07-10', priority: 'High',     column: 'In Progress' },
+  { id: 2,  title: 'Design Landing Page UI',           description: 'Create basic layouts for home page',                     assignee: 'Khushi Shah',    dueDate: '2026-07-15', priority: 'Medium',   column: 'To Do' },
+  { id: 3,  title: 'Implement Authentication',         description: 'Setup login/signup flows',                               assignee: 'Rehan Azim',     dueDate: '2026-07-20', priority: 'High',     column: 'To Do' },
+  { id: 4,  title: 'New color palette & brand identity', description: 'Define the new brand color palette and identity guidelines', assignee: 'Khushi Shah', dueDate: '2026-07-09', priority: 'Critical', column: 'In Progress' },
+  { id: 5,  title: 'Social media asset kit',           description: 'Create assets for social media campaign',                assignee: 'Sumit Tiwari',   dueDate: '2026-07-22', priority: 'Low',      column: 'Backlog' },
+  { id: 6,  title: 'Email templates',                  description: 'Design responsive email templates',                      assignee: 'Rehan Azim',     dueDate: '2026-07-18', priority: 'Medium',   column: 'Review' },
+  { id: 7,  title: 'Sprint 3 retrospective',           description: 'Document retrospective findings',                        assignee: 'Aditya Vawahal', dueDate: '2026-07-08', priority: 'Medium',   column: 'Done' },
+  { id: 8,  title: 'Brand identity guidelines',        description: 'Compile brand guidelines document',                      assignee: 'Khushi Shah',    dueDate: '2026-07-16', priority: 'High',     column: 'Review' },
+  { id: 9,  title: 'Logo variations',                  description: 'Create logo variations for different use cases',         assignee: 'Khushi Shah',    dueDate: '2026-07-09', priority: 'Critical', column: 'Done' },
+  { id: 10, title: 'Design tokens',                    description: 'Define design token system',                             assignee: 'Sumit Tiwari',   dueDate: '2026-07-25', priority: 'Medium',   column: 'Backlog' }
 ];
 
 let currentFilters = { searchQuery: '', priority: [], status: ['Backlog', 'To Do', 'In Progress', 'Review', 'Done'], assignee: [] };
@@ -82,7 +82,15 @@ function render() {
       const due = getDueInfo(task.dueDate);
       const labels = getLabels(task.priority);
       const an = task.assignee || 'Unassigned';
-      const ac = ['2563EB','8B5CF6','059669','F59E0B','EF4444'][Math.abs(task.id) % 5];
+      // Map each team member to their brand colour
+      const MEMBER_COLORS = {
+        'Ankit Bhalke':   '2563EB',
+        'Khushi Shah':    '8B5CF6',
+        'Rehan Azim':     '059669',
+        'Sumit Tiwari':   'F59E0B',
+        'Aditya Vawahal': 'EF4444',
+      };
+      const ac = MEMBER_COLORS[an] || '64748B';
       return `<article class="card-task${task.column === 'Done' ? ' card-task--done' : ''}" role="listitem" data-id="${task.id}">
   <div class="ct-top">
     <span class="pri pri--${priClass}"><i class="bi bi-${priIcon}"></i>${task.priority}</span>
@@ -157,6 +165,9 @@ function attachCardListeners() {
   document.querySelectorAll('.add-task-btn').forEach(btn => {
     btn.addEventListener('click', () => { editingTaskId = null; openModal(btn.getAttribute('data-column')); });
   });
+
+  // Wire up drag & drop after every render
+  if (typeof initDragDrop === 'function') initDragDrop();
 }
 
 function openModal(defaultStatus) {
@@ -269,8 +280,8 @@ function resetFilters() {
   document.querySelectorAll('#filterPriority input[type="checkbox"]').forEach(cb => cb.checked = false);
   document.querySelectorAll('#filterStatus input[type="checkbox"]').forEach(cb => cb.checked = true);
   document.querySelectorAll('#filterAssignee input[type="checkbox"]').forEach(cb => cb.checked = false);
-  const alexCb = document.querySelector('#filterAssignee input[value="Alex Johnson"]');
-  if (alexCb) alexCb.checked = true;
+  const ankitCb = document.querySelector('#filterAssignee input[value="Ankit Bhalke"]');
+  if (ankitCb) ankitCb.checked = true;
   applyFilters();
 }
 
