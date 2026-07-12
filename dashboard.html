@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/activity.css" />
   <link rel="stylesheet" href="src/styles.css" />
 </head>
 <body>
@@ -185,59 +186,38 @@
 
 </main>
 
-<!-- RIGHT SIDEBAR -->
-<aside class="sidebar-right" id="activitySidebar" aria-label="Activity timeline">
-  <div class="rs-head">
-    <h2 class="rs-title">Activity</h2>
-    <button class="hd-btn-icon rs-refresh" aria-label="Refresh activity"><i class="bi bi-arrow-clockwise"></i></button>
+<!-- RIGHT SIDEBAR — Activity Log -->
+<!-- The feed content is rendered dynamically by ActivityLog.js -->
+<aside class="sidebar-right" id="activitySidebar" aria-label="Activity log">
+
+  <!-- Header: title + clear button -->
+  <div class="al-header">
+    <div class="al-header-left">
+      <h2 class="al-header-title">Activity</h2>
+    </div>
+    <!-- Clear button — calls ActivityLog.clearActivities() via JS -->
+    <button
+      class="al-clear-btn"
+      id="alClearBtn"
+      aria-label="Clear all activity history"
+      title="Clear activity log"
+    >
+      <i class="bi bi-trash3"></i>
+    </button>
   </div>
-  <div class="rs-feed" role="feed">
-    <div class="rs-group">
-      <div class="rs-group-lbl">Today</div>
-      <div class="rs-item">
-        <img src="https://ui-avatars.com/api/?name=Khushi+Shah&background=8B5CF6&color=fff&size=28" alt="Khushi Shah" class="rs-av" />
-        <div class="rs-content"><p class="rs-text"><strong>Khushi Shah</strong> moved <span class="rs-task">"Logo variations"</span> to Review</p><time class="rs-time" datetime="2026-07-09T14:32">2 min ago</time></div>
-      </div>
-      <div class="rs-item">
-        <img src="https://ui-avatars.com/api/?name=Rehan+Azim&background=059669&color=fff&size=28" alt="Rehan Azim" class="rs-av" />
-        <div class="rs-content"><p class="rs-text"><strong>Rehan Azim</strong> commented on <span class="rs-task">"Email templates"</span></p><time class="rs-time" datetime="2026-07-09T14:18">24 min ago</time></div>
-      </div>
-      <div class="rs-item">
-        <img src="https://ui-avatars.com/api/?name=Ankit+Bhalke&background=2563EB&color=fff&size=28" alt="Ankit Bhalke" class="rs-av" />
-        <div class="rs-content"><p class="rs-text"><strong>Ankit Bhalke</strong> created <span class="rs-task">"Social media asset kit"</span></p><time class="rs-time" datetime="2026-07-09T13:55">1 hr ago</time></div>
-      </div>
-      <div class="rs-item">
-        <img src="https://ui-avatars.com/api/?name=Sumit+Tiwari&background=F59E0B&color=fff&size=28" alt="Sumit Tiwari" class="rs-av" />
-        <div class="rs-content"><p class="rs-text"><strong>Sumit Tiwari</strong> completed checklist item on <span class="rs-task">"Design tokens"</span></p><time class="rs-time" datetime="2026-07-09T12:40">2 hr ago</time></div>
-      </div>
-    </div>
-    <div class="rs-group">
-      <div class="rs-group-lbl">Yesterday</div>
-      <div class="rs-item">
-        <img src="https://ui-avatars.com/api/?name=Aditya+Vawahal&background=EF4444&color=fff&size=28" alt="Aditya Vawahal" class="rs-av" />
-        <div class="rs-content"><p class="rs-text"><strong>Aditya Vawahal</strong> completed <span class="rs-task">"Sprint 3 retrospective"</span></p><time class="rs-time" datetime="2026-07-08T17:10">Jul 8, 5:10 PM</time></div>
-      </div>
-      <div class="rs-item">
-        <img src="https://ui-avatars.com/api/?name=Khushi+Shah&background=8B5CF6&color=fff&size=28" alt="Khushi Shah" class="rs-av" />
-        <div class="rs-content"><p class="rs-text"><strong>Khushi Shah</strong> attached 4 files to <span class="rs-task">"Brand identity"</span></p><time class="rs-time" datetime="2026-07-08T15:30">Jul 8, 3:30 PM</time></div>
-      </div>
-      <div class="rs-item">
-        <img src="https://ui-avatars.com/api/?name=Ankit+Bhalke&background=2563EB&color=fff&size=28" alt="Ankit Bhalke" class="rs-av" />
-        <div class="rs-content"><p class="rs-text"><strong>Ankit Bhalke</strong> set <span class="rs-task">"Color palette"</span> to Critical</p><time class="rs-time" datetime="2026-07-08T11:05">Jul 8, 11:05 AM</time></div>
-      </div>
-    </div>
-    <div class="rs-group">
-      <div class="rs-group-lbl">Earlier</div>
-      <div class="rs-item">
-        <img src="https://ui-avatars.com/api/?name=Rehan+Azim&background=059669&color=fff&size=28" alt="Rehan Azim" class="rs-av" />
-        <div class="rs-content"><p class="rs-text"><strong>Rehan Azim</strong> was assigned to <span class="rs-task">"Email templates"</span></p><time class="rs-time" datetime="2026-07-07T09:20">Jul 7, 9:20 AM</time></div>
-      </div>
-      <div class="rs-item">
-        <img src="https://ui-avatars.com/api/?name=Ankit+Bhalke&background=2563EB&color=fff&size=28" alt="Ankit Bhalke" class="rs-av" />
-        <div class="rs-content"><p class="rs-text"><strong>Ankit Bhalke</strong> launched <span class="rs-task">Sprint 4</span></p><time class="rs-time" datetime="2026-07-07T08:00">Jul 7, 8:00 AM</time></div>
-      </div>
-    </div>
+
+  <!-- Live activity feed — populated by ActivityLog.js -->
+  <div
+    id="alFeed"
+    role="feed"
+    aria-label="Activity feed"
+    aria-live="polite"
+    aria-relevant="additions"
+  >
+    <!-- ActivityLog.js renders content here -->
   </div>
+
+  <!-- Active Now section (static — not touched by this module) -->
   <div class="rs-divider"></div>
   <div class="rs-head mt-3">
     <h2 class="rs-title">Active Now</h2>
@@ -260,6 +240,7 @@
       <span class="rs-team-dot rs-team-dot--on" aria-label="Online"></span>
     </div>
   </div>
+
 </aside>
 
 </div><!-- /app-shell -->
@@ -519,6 +500,8 @@
   })();
 </script>
 <script src="src/dragdrop.js"></script>
+<!-- ActivityLog must load before app.js so the global is available -->
+<script src="src/components/activity/ActivityLog.js"></script>
 <script src="src/app.js"></script>
 
 </body>

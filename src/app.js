@@ -30,6 +30,24 @@ function saveTasks() {
 
 let tasks = loadTasks();
 
+/* ── ACTIVITY LOG USER HELPER ─────────────────────────────── */
+/**
+ * Resolve the currently logged-in user's display name.
+ * Falls back to 'Ankit Bhalke' so activity entries are never blank.
+ * Reads from the same localStorage session key used by the login flow.
+ */
+function getActivityUser() {
+  try {
+    const session = JSON.parse(localStorage.getItem('pf_session') || 'null');
+    if (session && session.name) return session.name;
+    // Second fallback: last registered account
+    const users = JSON.parse(localStorage.getItem('pf_users') || '[]');
+    if (users.length > 0) return users[users.length - 1].name;
+  } catch {}
+  // Final fallback if localStorage is unavailable
+  return 'Ankit Bhalke';
+}
+
 let currentFilters = { searchQuery: '', priority: [], status: ['Backlog', 'To Do', 'In Progress', 'Review', 'Done'], assignee: [] };
 let editingTaskId = null;
 let currentView = 'kanban'; // 'kanban' | 'list'
@@ -110,6 +128,14 @@ function addColumn(name) {
   if (COLUMN_META[key]) return;
   COLUMN_META[key] = { icon: 'plus', iconClass: 'kol-icon--backlog', activeClass: '' };
   render();
+  // Record the column creation in the activity log
+  if (window.ActivityLog) {
+    window.ActivityLog.addActivity({
+      type:     'column-created',
+      user:     getActivityUser(),
+      taskName: key,
+    });
+  }
 }
 
 function renameColumn(oldName, newName) {
@@ -120,6 +146,15 @@ function renameColumn(oldName, newName) {
   if (key !== oldName) delete COLUMN_META[oldName];
   tasks.forEach(t => { if (t.column === oldName) t.column = key; });
   render();
+  // Record the rename in the activity log
+  if (window.ActivityLog) {
+    window.ActivityLog.addActivity({
+      type:     'column-renamed',
+      user:     getActivityUser(),
+      taskName: oldName,
+      detail:   `to "${key}"`,
+    });
+  }
 }
 
 function deleteColumn(name) {
@@ -129,6 +164,14 @@ function deleteColumn(name) {
   tasks.forEach(t => { if (t.column === name) t.column = remaining; });
   delete COLUMN_META[name];
   render();
+  // Record the deletion in the activity log
+  if (window.ActivityLog) {
+    window.ActivityLog.addActivity({
+      type:     'column-deleted',
+      user:     getActivityUser(),
+      taskName: name,
+    });
+  }
 }
 
 const LABEL_MAP = { 'Critical': ['Design','Branding','Goal'], 'High': ['Design','Dev'], 'Medium': ['Dev','Content'], 'Low': ['Research'] };
@@ -299,9 +342,22 @@ function attachCardListeners() {
       e.stopPropagation();
       const id = parseInt(btn.getAttribute('data-id'));
       if (confirm('Delete this task?')) {
+        // Capture the task title before removing it
+        const target = tasks.find(t => t.id === id);
+        const deletedTitle = target ? target.title : '';
+
         tasks = tasks.filter(t => t.id !== id);
         if (editingTaskId === id) editingTaskId = null;
         render();
+
+        // Record the deletion in the activity log
+        if (window.ActivityLog && deletedTitle) {
+          window.ActivityLog.addActivity({
+            type:     'task-deleted',
+            user:     getActivityUser(),
+            taskName: deletedTitle,
+          });
+        }
       }
     });
   });
@@ -440,12 +496,97 @@ function saveTask() {
   };
 
   if (editingTaskId) {
+    // ── Capture the previous state before applying the edit ──
+    const prevTask = tasks.find(t => t.id === editingTaskId);
+    const prevColumn   = prevTask ? prevTask.column   : null;
+    const prevPriority = prevTask ? prevTask.priority : null;
+    const prevAssignee = prevTask ? prevTask.assignee : null;
+
     tasks = tasks.map(t => t.id === editingTaskId ? { ...t, ...task } : t);
+    closeModal();
+    render();
+
+    // Fire the appropriate activity event(s) based on what changed
+    if (window.ActivityLog) {
+      const user = getActivityUser();
+
+      // Column changed → task moved
+      if (prevColumn && task.column !== prevColumn) {
+        window.ActivityLog.addActivity({
+          type:     'task-moved',
+          user,
+          taskName: task.title,
+          detail:   `to ${task.column}`,
+        });
+      }
+
+      // Priority changed
+      if (prevPriority && task.priority !== prevPriority) {
+        window.ActivityLog.addActivity({
+          type:     'priority-changed',
+          user,
+          taskName: task.title,
+          detail:   `to ${task.priority}`,
+        });
+      }
+
+      // Assignee changed
+      if (prevAssignee !== task.assignee) {
+        if (task.assignee) {
+          window.ActivityLog.addActivity({
+            type:     'task-assigned',
+            user,
+            taskName: task.title,
+            detail:   `to ${task.assignee}`,
+          });
+        } else {
+          window.ActivityLog.addActivity({
+            type:     'task-unassigned',
+            user,
+            taskName: task.title,
+          });
+        }
+      }
+
+      // Due date changed
+      if (prevTask && dueDate !== (prevTask.dueDate || '')) {
+        window.ActivityLog.addActivity({
+          type:     'deadline-updated',
+          user,
+          taskName: task.title,
+          detail:   dueDate ? `to ${dueDate}` : '(removed)',
+        });
+      }
+
+      // If nothing specific matched, record a general edit
+      const nothingSpecific =
+        prevColumn   === task.column   &&
+        prevPriority === task.priority &&
+        prevAssignee === task.assignee &&
+        (prevTask ? dueDate === (prevTask.dueDate || '') : false);
+      if (nothingSpecific) {
+        window.ActivityLog.addActivity({
+          type:     'task-edited',
+          user,
+          taskName: task.title,
+        });
+      }
+    }
+
   } else {
     tasks.push(task);
+    closeModal();
+    render();
+
+    // Record task creation
+    if (window.ActivityLog) {
+      window.ActivityLog.addActivity({
+        type:     'task-created',
+        user:     getActivityUser(),
+        taskName: task.title,
+      });
+    }
   }
-  closeModal();
-  render();
 }
 
 function collectFilters() {
@@ -710,4 +851,43 @@ function closeMobileDrawers(left, right) {
   setDrawerOverlay(!!anyOpen);
 }
 
+/* ── DRAG-DROP ACTIVITY HOOK ───────────────────────────────── */
+/**
+ * Wrap the global commitMove() from dragdrop.js so that every
+ * successful card drag-drop fires an activity log entry.
+ *
+ * We wait until after the first render (DOMContentLoaded) so
+ * commitMove is guaranteed to be in scope before we wrap it.
+ * dragdrop.js itself is never modified.
+ */
+(function patchCommitMove() {
+  // commitMove is defined at global scope in dragdrop.js.
+  // If the script hasn't run yet for some reason, bail gracefully.
+  if (typeof commitMove !== 'function') return;
+
+  const originalCommitMove = commitMove;
+
+  // Override the global so dragdrop.js calls our wrapper
+  window.commitMove = function (taskId, newColumn, beforeId) {
+    // Find the task's current column before the move happens
+    const movingTask = tasks.find(t => t.id === taskId);
+    const fromColumn = movingTask ? movingTask.column : null;
+
+    // Call the original move logic
+    originalCommitMove(taskId, newColumn, beforeId);
+
+    // Only log if the column actually changed (not same-column reorder)
+    if (window.ActivityLog && fromColumn && fromColumn !== newColumn) {
+      const movedTask = tasks.find(t => t.id === taskId);
+      window.ActivityLog.addActivity({
+        type:     'task-moved',
+        user:     getActivityUser(),
+        taskName: movedTask ? movedTask.title : String(taskId),
+        detail:   `to ${newColumn}`,
+      });
+    }
+  };
+})();
+
 init();
+

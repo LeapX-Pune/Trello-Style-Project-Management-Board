@@ -1,0 +1,301 @@
+/* ============================================================
+   activity.css — Activity Log Styles
+   ProjectFlow — scoped to .al-* classes only
+   Reuses CSS variables from style.css — no new colours added.
+   ============================================================ */
+
+/* ─── FEED CONTAINER ───────────────────────────────────────── */
+
+/*
+ * The scrollable inner area of the activity sidebar.
+ * The sidebar itself (.sidebar-right) already handles the
+ * outer flex layout and scrollbar styling.
+ */
+#alFeed {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  /* Overflow is managed by the parent .sidebar-right */
+}
+
+/* ─── HEADER ROW ────────────────────────────────────────────── */
+
+/*
+ * Overrides the existing .rs-head to add a Clear button
+ * on the right side of the Activity sidebar header.
+ */
+.al-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.al-header-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.al-header-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-txt);
+}
+
+/* Small "Clear" button — shown on hover of the header */
+.al-clear-btn {
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--c-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--c-muted);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color var(--t), border-color var(--t), background var(--t);
+  flex-shrink: 0;
+}
+
+.al-clear-btn:hover {
+  color: var(--c-red);
+  border-color: #FECDD3;
+  background: #FFF1F2;
+}
+
+/* ─── DATE-GROUP HEADER ─────────────────────────────────────── */
+
+/*
+ * Groups activities into Today / Yesterday / Earlier sections.
+ * The label sits above its activity items with a subtle line.
+ */
+.al-group {
+  margin-bottom: 4px;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+/* First group should not add extra top margin */
+.al-group:first-child {
+  margin-top: 0;
+}
+
+.al-group-lbl {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--c-muted);
+  padding: 2px 0;
+  margin-bottom: 6px;
+}
+
+/* ─── ACTIVITY ITEM ─────────────────────────────────────────── */
+
+/*
+ * Each activity row: icon badge on the left, content on the right.
+ * Uses the same two-column pattern as the existing .rs-item.
+ */
+.al-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 8px 6px;
+  border-radius: var(--r-sm);
+  border-bottom: 1px solid var(--c-surface);
+  transition: background var(--t);
+  cursor: default;
+  position: relative;
+}
+
+.al-item:last-child {
+  border-bottom: none;
+}
+
+.al-item:hover {
+  background: var(--c-surface);
+}
+
+/* Slide-in animation for newly added activities */
+.al-item--new {
+  animation: alSlideIn 0.32s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes alSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Fade in for items already present on load */
+.al-item--loaded {
+  animation: alFadeIn 0.28s ease both;
+}
+
+@keyframes alFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── ICON BADGE ────────────────────────────────────────────── */
+
+/*
+ * The small coloured square on the left of each activity.
+ * Inherits the .notif-icon pattern from the notifications panel.
+ */
+.al-icon-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+  /* Subtle bounce on hover */
+  transition: transform var(--t);
+}
+
+.al-item:hover .al-icon-wrap {
+  transform: scale(1.1);
+}
+
+/* Colour variants — one per activity category */
+.al-icon--blue   { background: #EFF6FF; color: var(--c-blue); }
+.al-icon--green  { background: #F0FDF4; color: #16A34A; }
+.al-icon--yellow { background: #FFFBEB; color: #B45309; }
+.al-icon--red    { background: #FFF1F2; color: #BE123C; }
+.al-icon--orange { background: #FFF7ED; color: #C2410C; }
+.al-icon--purple { background: #FAF5FF; color: #7C3AED; }
+.al-icon--teal   { background: #F0FDFA; color: #0D9488; }
+.al-icon--gray   { background: var(--c-surface); color: var(--c-txt2); }
+
+/* ─── ACTIVITY CONTENT ──────────────────────────────────────── */
+
+.al-content {
+  flex: 1;
+  min-width: 0; /* prevents text overflow from expanding the column */
+}
+
+/* User avatar — small, round */
+.al-av {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--r-full);
+  object-fit: cover;
+  float: left;
+  margin-right: 6px;
+  margin-top: 1px; /* optical alignment with text */
+  flex-shrink: 0;
+}
+
+/* Main description paragraph */
+.al-text {
+  font-size: 11.5px;
+  color: var(--c-txt2);
+  line-height: 1.55;
+  margin: 0;
+  /* Wrap long task names gracefully */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Emphasise the actor's name */
+.al-text strong {
+  color: var(--c-txt);
+  font-weight: 600;
+}
+
+/* Highlighted task name — blue, matches the rest of the board */
+.al-task-name {
+  color: var(--c-blue);
+  font-weight: 500;
+}
+
+/* Relative timestamp */
+.al-time {
+  display: block;
+  font-size: 10.5px;
+  color: var(--c-muted);
+  margin-top: 3px;
+  clear: left; /* clear the floated avatar */
+}
+
+/* ─── EMPTY STATE ───────────────────────────────────────────── */
+
+/*
+ * Shown when there are zero recorded activities.
+ * Centred vertically in the feed area.
+ */
+.al-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+  flex: 1;
+  animation: alFadeIn 0.3s ease both;
+}
+
+.al-empty-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--c-muted);
+  margin-bottom: 12px;
+  /* Subtle pulse so the icon feels alive */
+  animation: alEmptyPulse 3s ease-in-out infinite;
+}
+
+@keyframes alEmptyPulse {
+  0%,  100% { opacity: 0.7; transform: scale(1);    }
+  50%        { opacity: 1;   transform: scale(1.06); }
+}
+
+.al-empty-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-txt2);
+  margin: 0 0 4px;
+}
+
+.al-empty-sub {
+  font-size: 11.5px;
+  color: var(--c-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ─── RESPONSIVE: mobile drawer ─────────────────────────────── */
+
+/*
+ * When the activity sidebar opens as a mobile drawer (is-open class
+ * applied by app.js), it slides in from the right.
+ * The existing responsive.css handles the drawer positioning;
+ * this block only ensures the feed layout still works inside it.
+ */
+@media (max-width: 767px) {
+  #alFeed {
+    /* Allow the feed to take all available space in the drawer */
+    flex: 1;
+    overflow-y: auto;
+  }
+}
