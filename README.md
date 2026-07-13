@@ -182,6 +182,7 @@ The app seeds 10 sample tasks for a **"Marketing Rebrand 2026"** sprint on first
 | Khushi Shah | UI/UX Designer |
 | Rehan Azim | Frontend Developer |
 | Sumit Tiwari | Frontend Developer |
+| Aditya Vawahal | Frontend Developer |
 | Sai Shendge | Docs | 
 
 ---
