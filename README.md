@@ -5,10 +5,6 @@
 
 **ProjectFlow** is a full-featured Kanban project management board built with vanilla JavaScript, HTML5, and CSS3. No frameworks, no bundlers — just clean, modern front-end code that runs entirely in the browser with data persisted to `localStorage`.
 
-![ProjectFlow Kanban Board](https://ui-avatars.com/api/?name=Project+Flow&size=256&background=2563EB&color=fff&bold=true&font-size=0.4)
-
----
-
 ## Features
 
 ### 📋 Kanban Board
